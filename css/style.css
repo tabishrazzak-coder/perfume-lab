@@ -677,8 +677,25 @@
   animation: droplet-fall 450ms ease-in forwards;
 }
 
-/* Beaker liquid shimmer */
-@keyframes beaker-shimmer {
-  0%, 100% { opacity: 0.7; }
+
+
+/* Beaker liquid wave animation */
+@keyframes wave-drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(33.333%); }
+}
+
+/* Beaker liquid highlight shimmer */
+@keyframes liquid-shimmer {
+  0%, 100% { opacity: 0.85; }
   50% { opacity: 1; }
+}
+
+#liquid-highlight1 {
+  animation: liquid-shimmer 4.5s ease-in-out infinite;
+}
+
+#liquid-highlight2 {
+  animation: liquid-shimmer 6s ease-in-out infinite;
+  animation-delay: -2s;
 }

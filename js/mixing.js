@@ -163,13 +163,46 @@ function setBeakerLevel(total, capacity, color, opacity) {
 
   if (total === 0) {
     fill.style.height = '0%';
-    fill.style.background = 'rgba(150,150,150,0.15)';
     fill.style.opacity = '1';
-  } else {
-    fill.style.height = fillPct + '%';
-    fill.style.background = 'linear-gradient(to bottom, ' + lightenColor(color, 0.3) + ' 0%, ' + color + ' 40%, ' + darkenColor(color, 0.15) + ' 100%)';
-    fill.style.opacity = '0.75';
+    return;
   }
+
+  fill.style.height = fillPct + '%';
+  fill.style.opacity = '1';
+
+  var light = lightenColor(color, 0.3);
+  var dark = darkenColor(color, 0.15);
+
+  // Liquid body gradient
+  var body = document.getElementById('liquid-body');
+  if (body) body.style.background = 'linear-gradient(to bottom, ' + light + ' 0%, ' + color + ' 40%, ' + dark + ' 100%)';
+
+  // Wave layer 1 (main, full opacity)
+  var w1 = document.getElementById('wave-layer1');
+  if (w1) {
+    w1.style.background = waveSVG(color, 4);
+    w1.style.backgroundSize = '200px 14px';
+    w1.style.animation = 'wave-drift 3s linear infinite';
+  }
+
+  // Wave layer 2 (secondary, lighter, slower)
+  var w2 = document.getElementById('wave-layer2');
+  if (w2) {
+    w2.style.background = waveSVG(light, 3);
+    w2.style.backgroundSize = '200px 12px';
+    w2.style.animation = 'wave-drift 4.5s linear infinite';
+  }
+
+  // Radial light overlay at top
+  var rad = document.getElementById('liquid-radial');
+  if (rad) rad.style.background = 'radial-gradient(ellipse at 50% 0%, ' + hexAlpha(light, 0.35) + ' 0%, transparent 75%)';
+
+  // Highlights
+  var h1 = document.getElementById('liquid-highlight1');
+  if (h1) h1.style.background = 'linear-gradient(25deg, transparent 25%, rgba(255,255,255,0.18) 45%, rgba(255,255,255,0.28) 50%, rgba(255,255,255,0.18) 55%, transparent 75%)';
+
+  var h2 = document.getElementById('liquid-highlight2');
+  if (h2) h2.style.background = 'linear-gradient(25deg, transparent 30%, rgba(255,255,255,0.12) 50%, transparent 70%)';
 }
 
 function lightenColor(hex, amt) {
