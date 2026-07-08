@@ -1,10 +1,10 @@
 var OILS = [
-  { id: 'bergamot', name: 'Bergamot', emoji: '🍊', keyword: 'Fresh' },
-  { id: 'lavender', name: 'Lavender', emoji: '💜', keyword: 'Calming' },
-  { id: 'rose', name: 'Rose', emoji: '🌹', keyword: 'Floral' },
-  { id: 'sandalwood', name: 'Sandalwood', emoji: '🪵', keyword: 'Warm' },
-  { id: 'jasmine', name: 'Jasmine', emoji: '🌸', keyword: 'Sweet' },
-  { id: 'vanilla', name: 'Vanilla', emoji: '🍦', keyword: 'Sweet' },
+  { id: 'bergamot', name: 'Bergamot', emoji: '🍊', keyword: 'Fresh', color: '#F5A623' },
+  { id: 'lavender', name: 'Lavender', emoji: '💜', keyword: 'Calming', color: '#9B59B6' },
+  { id: 'rose', name: 'Rose', emoji: '🌹', keyword: 'Floral', color: '#E74C3C' },
+  { id: 'sandalwood', name: 'Sandalwood', emoji: '🪵', keyword: 'Warm', color: '#8B6914' },
+  { id: 'jasmine', name: 'Jasmine', emoji: '🌸', keyword: 'Sweet', color: '#F8BBD0' },
+  { id: 'vanilla', name: 'Vanilla', emoji: '🍦', keyword: 'Sweet', color: '#F5E6CC' },
 ];
 
 function getCapacity() {
@@ -27,6 +27,33 @@ function updateTotalDisplay() {
   if (el) el.textContent = total;
 }
 
+function spawnDroplet(color) {
+  var droplet = document.createElement('div');
+  droplet.className = 'oil-droplet';
+  droplet.style.backgroundColor = color;
+  droplet.style.boxShadow = '0 2px 6px ' + color + '80';
+  document.body.appendChild(droplet);
+
+  var mixingScreen = document.getElementById('screen-mixing');
+  var screenRect = mixingScreen.getBoundingClientRect();
+  var startX = screenRect.left + screenRect.width / 2 - 8;
+  var startY = screenRect.top + 80;
+  droplet.style.left = startX + 'px';
+  droplet.style.top = startY + 'px';
+
+  var beakerEl = mixingScreen.querySelector('img[alt="Beaker"]');
+  var endY;
+  if (beakerEl) {
+    var beakerRect = beakerEl.getBoundingClientRect();
+    endY = beakerRect.top + beakerRect.height * 0.6 - startY;
+  } else {
+    endY = window.innerHeight * 0.45;
+  }
+  droplet.style.setProperty('--drop-distance', endY + 'px');
+
+  setTimeout(function() { droplet.remove(); }, 500);
+}
+
 function changeOil(oilId, delta) {
   if (!window.perfumeState.mix) window.perfumeState.mix = {};
   var current = window.perfumeState.mix[oilId] || 0;
@@ -38,7 +65,13 @@ function changeOil(oilId, delta) {
   var el = document.querySelector('.oil-amount[data-oil="' + oilId + '"]');
   if (el) el.textContent = newVal;
 
+  if (delta > 0) {
+    var oil = OILS.find(function(o) { return o.id === oilId; });
+    if (oil) spawnDroplet(oil.color);
+  }
+
   updateTotalDisplay();
+  updateBeaker();
 }
 
 function resetMixing() {
@@ -47,6 +80,7 @@ function resetMixing() {
     el.textContent = '0';
   });
   updateTotalDisplay();
+  updateBeaker();
 }
 
 function addEthanol() {
@@ -82,18 +116,19 @@ function blendColors() {
   OILS.forEach(function (oil) {
     var ml = mix[oil.id] || 0;
     if (ml > 0) {
-      totalR += ml;
-      totalG += ml;
-      totalB += ml;
+      var rgb = hexToRgb(oil.color);
+      totalR += rgb.r * ml;
+      totalG += rgb.g * ml;
+      totalB += rgb.b * ml;
       totalMl += ml;
     }
   });
 
   if (totalMl === 0) return 'rgba(150,150,150,0.15)';
 
-  var r = totalR / totalMl;
-  var g = totalG / totalMl;
-  var b = totalB / totalMl;
+  var r = Math.round(totalR / totalMl);
+  var g = Math.round(totalG / totalMl);
+  var b = Math.round(totalB / totalMl);
   return rgbToHex(r, g, b);
 }
 
@@ -121,71 +156,27 @@ function diluteColor(hex) {
 }
 
 function setBeakerLevel(total, capacity, color, opacity) {
-  var liquid = document.getElementById('beaker-liquid');
-  if (!liquid) return;
-  var flaskBottom = 243;
-  var flaskHeight = 143;
+  var fill = document.getElementById('beaker-fill');
+  if (!fill) return;
   var fillRatio = Math.min(total / capacity, 1);
-  var fillHeight = fillRatio * flaskHeight;
-  var liquidTop = flaskBottom - fillHeight;
+  var fillPct = fillRatio * 70;
 
   if (total === 0) {
-    liquid.setAttribute('d',
-      'M57 243 Q57 243 80 243 L100 243 Q123 243 123 243 L123 243 L57 243 Z');
-    liquid.setAttribute('fill', 'rgba(150,150,150,0.15)');
-    liquid.setAttribute('fill-opacity', '1');
+    fill.style.height = '0%';
+    fill.style.background = 'rgba(150,150,150,0.15)';
+    fill.style.borderTop = 'none';
   } else {
-    liquid.setAttribute('d',
-      'M57 ' + liquidTop +
-      ' L57 220 Q57 243 80 243 L100 243 Q123 243 123 220 L123 ' + liquidTop +
-      ' Z');
-    liquid.setAttribute('fill', color);
-    liquid.setAttribute('fill-opacity', String(opacity));
+    fill.style.height = fillPct + '%';
+    fill.style.background = color;
+    fill.style.opacity = '0.6';
+    fill.style.borderTop = '2px solid rgba(255,255,255,0.5)';
   }
 }
 
 function updateBeaker() {
   var total = getTotalMl();
   var capacity = getCapacity();
-  var totalEl = document.getElementById('mix-total');
-  var descEl = document.getElementById('scent-description');
-  var btn = document.getElementById('btn-alcohol');
-  var warning = document.getElementById('mix-warning');
-
   setBeakerLevel(total === 0 ? 0 : total, capacity, total === 0 ? '' : blendColors(), total === 0 ? 1 : 0.85);
-
-  if (totalEl) totalEl.textContent = total;
-
-  if (warning) {
-    if (total > capacity) {
-      warning.classList.remove('hidden');
-    } else {
-      warning.classList.add('hidden');
-    }
-  }
-
-  if (descEl) {
-    descEl.textContent = buildScentDescription();
-    if (total > 0 && total <= capacity) {
-      descEl.classList.remove('text-cream/40');
-      descEl.classList.add('text-cream/70');
-    } else {
-      descEl.classList.add('text-cream/40');
-      descEl.classList.remove('text-cream/70');
-    }
-  }
-
-  if (btn) {
-    if (total > 0 && total <= capacity && !window.perfumeState.mix.alcohol) {
-      btn.disabled = false;
-      btn.classList.remove('border-cream/20', 'text-cream/30', 'cursor-not-allowed');
-      btn.classList.add('border-gold', 'text-gold', 'hover:bg-gold', 'hover:text-dark', 'cursor-pointer');
-    } else {
-      btn.disabled = true;
-      btn.classList.add('border-cream/20', 'text-cream/30', 'cursor-not-allowed');
-      btn.classList.remove('border-gold', 'text-gold', 'hover:bg-gold', 'hover:text-dark', 'cursor-pointer');
-    }
-  }
 }
 
 function addAlcohol() {
@@ -228,7 +219,7 @@ function addAlcohol() {
     liquid.classList.remove('pour-fill');
 
     document.getElementById('mix-total').textContent = capacity;
-    document.getElementById('scent-description').textContent = buildScentDescription() + ' — Perfume Alcohol added';
+    document.getElementById('scent-description').textContent = buildScentDescription() + ' â€” Perfume Alcohol added';
 
     stream.classList.add('hidden');
 
@@ -294,24 +285,6 @@ function shakeAndMix() {
   }, 1600);
 }
 
-function changeOil(oilId, delta) {
-  var mix = window.perfumeState.mix;
-  var current = mix[oilId] || 0;
-  var next = current + delta;
-  if (next < 0) next = 0;
-
-  var capacity = getCapacity();
-  var totalBefore = getTotalMl() - current;
-  if (next > 0 && totalBefore + next > capacity + 10) return;
-
-  mix[oilId] = next;
-
-  var mlEl = document.getElementById('ml-' + oilId);
-  if (mlEl) mlEl.textContent = next;
-
-  updateBeaker();
-}
-
 function renderMixingStation() {
   var container = document.getElementById('mixing-layout');
   if (!container) return;
@@ -341,13 +314,13 @@ function renderMixingStation() {
   container.innerHTML =
     '<div class="flex flex-col lg:flex-row gap-10">' +
 
-      /* Left panel — oils */
+      /* Left panel â€” oils */
       '<div class="lg:w-80 flex-shrink-0">' +
         '<h3 class="text-gold tracking-[0.2em] uppercase text-xs mb-4">Fragrance Oils</h3>' +
         '<div class="space-y-3">' + oilsHtml + '</div>' +
       '</div>' +
 
-      /* Center — beaker + controls */
+      /* Center â€” beaker + controls */
       '<div class="flex-1 flex flex-col items-center">' +
 
         /* Beaker SVG */
@@ -497,7 +470,7 @@ function renderBottleScreen() {
       '<div id="bottle-scent-label" class="opacity-0 transition-opacity duration-700">' +
         '<p class="text-gold tracking-[0.2em] uppercase text-xs mb-2">Your Blend</p>' +
         '<p class="text-cream/80 text-lg font-light mb-1">' + scentText + '</p>' +
-        '<p class="text-cream/40 text-sm">' + capacity + 'ml — Perfume Lab</p>' +
+        '<p class="text-cream/40 text-sm">' + capacity + 'ml â€” Perfume Lab</p>' +
       '</div>' +
 
       /* Sticker button (hidden until fill complete) */
