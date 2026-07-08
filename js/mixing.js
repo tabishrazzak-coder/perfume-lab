@@ -155,6 +155,27 @@ function diluteColor(hex) {
   return rgbToHex(r, g, b);
 }
 
+function hexAlpha(hex, a) {
+  var r = parseInt(hex.slice(1,3), 16);
+  var g = parseInt(hex.slice(3,5), 16);
+  var b = parseInt(hex.slice(5,7), 16);
+  return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+}
+
+function waveSVG(color, amp) {
+  amp = amp || 10;
+  var y1 = amp;
+  var y2 = amp * 0.4;
+  var y3 = amp * 1.6;
+  var h = amp + 4;
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 ' + h + '" preserveAspectRatio="none">' +
+    '<path d="M0 ' + y1 +
+    ' C25 ' + y3 + ' 75 ' + y2 + ' 100 ' + y1 +
+    ' C125 ' + y3 + ' 175 ' + y2 + ' 200 ' + y1 +
+    ' L200 0 L0 0 Z" fill="' + color + '"/></svg>';
+  return 'url("data:image/svg+xml,' + encodeURIComponent(svg) + '")';
+}
+
 function setBeakerLevel(total, capacity, color, opacity) {
   var fill = document.getElementById('beaker-fill');
   if (!fill) return;
@@ -170,39 +191,52 @@ function setBeakerLevel(total, capacity, color, opacity) {
   fill.style.height = fillPct + '%';
   fill.style.opacity = '1';
 
-  var light = lightenColor(color, 0.3);
-  var dark = darkenColor(color, 0.15);
+  var light = lightenColor(color, 0.35);
+  var dark = darkenColor(color, 0.25);
 
-  // Liquid body gradient
+  // Liquid body gradient — increased contrast
   var body = document.getElementById('liquid-body');
-  if (body) body.style.background = 'linear-gradient(to bottom, ' + light + ' 0%, ' + color + ' 40%, ' + dark + ' 100%)';
+  if (body) body.style.background = 'linear-gradient(to bottom, ' + light + ' 0%, ' + color + ' 35%, ' + dark + ' 100%)';
 
-  // Wave layer 1 (main, full opacity)
+  // Wave layer 1 (main) — amplitude 10px
   var w1 = document.getElementById('wave-layer1');
   if (w1) {
-    w1.style.background = waveSVG(color, 4);
-    w1.style.backgroundSize = '200px 14px';
+    w1.style.background = waveSVG(color, 10);
+    w1.style.backgroundSize = '200px ' + 16 + 'px';
+    w1.style.backgroundRepeat = 'repeat-x';
     w1.style.animation = 'wave-drift 3s linear infinite';
   }
 
-  // Wave layer 2 (secondary, lighter, slower)
+  // Wave layer 2 (secondary) — amplitude 7px, lighter, slower
   var w2 = document.getElementById('wave-layer2');
   if (w2) {
-    w2.style.background = waveSVG(light, 3);
-    w2.style.backgroundSize = '200px 12px';
+    w2.style.background = waveSVG(light, 7);
+    w2.style.backgroundSize = '200px ' + 13 + 'px';
+    w2.style.backgroundRepeat = 'repeat-x';
     w2.style.animation = 'wave-drift 4.5s linear infinite';
   }
 
   // Radial light overlay at top
   var rad = document.getElementById('liquid-radial');
-  if (rad) rad.style.background = 'radial-gradient(ellipse at 50% 0%, ' + hexAlpha(light, 0.35) + ' 0%, transparent 75%)';
+  if (rad) rad.style.background = 'radial-gradient(ellipse at 50% 0%, ' + hexAlpha(light, 0.4) + ' 0%, transparent 70%)';
 
-  // Highlights
+  // Main highlight — larger, more opaque diagonal band
   var h1 = document.getElementById('liquid-highlight1');
-  if (h1) h1.style.background = 'linear-gradient(25deg, transparent 25%, rgba(255,255,255,0.18) 45%, rgba(255,255,255,0.28) 50%, rgba(255,255,255,0.18) 55%, transparent 75%)';
+  if (h1) {
+    h1.style.background = 'linear-gradient(25deg, transparent 15%, rgba(255,255,255,0.32) 35%, rgba(255,255,255,0.48) 50%, rgba(255,255,255,0.32) 65%, transparent 85%)';
+    h1.style.top = '8%';
+    h1.style.left = '8%';
+    h1.style.width = '50%';
+    h1.style.height = '80%';
+    h1.style.filter = 'blur(6px)';
+  }
 
+  // Secondary highlight — smaller side reflection
   var h2 = document.getElementById('liquid-highlight2');
-  if (h2) h2.style.background = 'linear-gradient(25deg, transparent 30%, rgba(255,255,255,0.12) 50%, transparent 70%)';
+  if (h2) {
+    h2.style.background = 'linear-gradient(25deg, transparent 25%, rgba(255,255,255,0.22) 45%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.22) 55%, transparent 75%)';
+    h2.style.filter = 'blur(5px)';
+  }
 }
 
 function lightenColor(hex, amt) {
