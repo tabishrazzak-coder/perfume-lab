@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Velmora — Perfume Lab</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: '#C9A96E',
+            cream: '#F5F0E8',
+            dark: '#0A0A0A',
+          }
+        }
+      }
+    }
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-screen text-cream font-sans" style="background:#fff;">
+
+  <!-- Screen 0: Loading -->
+  <div id="screen-loading" class="screen min-h-screen relative overflow-hidden flex flex-col items-center justify-center" style="background:#FAFAFA; background-image: url('assets/loading-bg.png'); background-size: cover; background-position: center bottom right; padding-top: 0px;">
+
+    <!-- Content -->
+    <div class="relative z-10 flex flex-col items-center text-center px-6" style="gap: 0;">
+      <!-- Velmora logo -->
+      <img src="assets/velmora-logo.png" alt="Velmora" class="loading-logo" style="height:auto; margin-top: -55px;">
+
+      <!-- Flask icon -->
+      <img src="assets/loading-beaker.png" alt="" class="loading-flask" style="height:auto; margin-top: -70px; margin-bottom: -60px;">
+
+      <p class="loading-subtitle">PERFUME LAB</p>
+      <p class="loading-tagline">Design your own scent</p>
+
+      <!-- Spinner card -->
+      <div class="loading-spinner-wrap" style="margin-top: 80px;">
+        <svg class="loading-spinner-arc" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="46" stroke="rgba(0,0,0,0.08)" stroke-width="1.5" fill="none"/>
+          <path d="M50 4 A46 46 0 0 1 96 50" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </svg>
+        <div class="loading-spinner-center">
+          <img src="assets/loading-rose.png" alt="" class="loading-spinner-icon" style="height:auto;">
+        </div>
+      </div>
+
+      <!-- Loading text -->
+      <p class="loading-text">LOADING</p>
+    </div>
+  </div>
+
+  <!-- Screen 1: Welcome -->
+  <div id="screen-welcome" class="screen relative w-full min-h-screen overflow-hidden">
+  </div>
+
+  <!-- Screen 2: Bottle Size Selection -->
+  <div id="screen-size" class="screen min-h-screen relative overflow-hidden hidden" style="background:#fff;">
+    <!-- Top bar -->
+    <div class="relative z-10 flex items-center justify-between pt-4 px-4">
+      <button onclick="showScreen('screen-loading')" class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-gray-400 transition-colors">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="text-center">
+        <span class="text-xl tracking-[0.15em] text-gray-900" style="font-family:'Playfair Display',serif;">velm<span style="font-size:0.7em;">🌿</span>ra</span>
+      </div>
+      <button class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-gray-400 transition-colors">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 7V11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="8" cy="5.5" r="0.7" fill="currentColor"/></svg>
+      </button>
+    </div>
+
+    <!-- Step indicator -->
+    <div class="relative z-10 text-center mt-4">
+      <span class="inline-block border border-gray-300 rounded-full px-4 py-1 text-[11px] tracking-[0.15em] text-gray-500 uppercase">Step 1 of 4</span>
+    </div>
+
+    <!-- Title -->
+    <div class="relative z-10 text-center mt-4 px-6">
+      <h2 class="text-3xl text-gray-900" style="font-family:'Playfair Display',serif;">Choose Your Bottle</h2>
+      <p class="text-gray-400 text-sm mt-2">Select a size and a bottle that suits your style</p>
+    </div>
+
+    <!-- Scrollable content -->
+    <div class="relative z-10 mt-6 px-5 pb-24 overflow-y-auto max-w-2xl mx-auto w-full" style="max-height: calc(100vh - 200px);">
+
+      <!-- Section 1: Select Size -->
+      <div class="mb-6">
+        <p class="text-[11px] tracking-[0.2em] text-gray-500 uppercase mb-3">1. Select Size</p>
+        <div class="grid grid-cols-3 gap-3">
+          <!-- 30 ML -->
+          <div class="size-select-card selected" data-size="30ml" onclick="selectSizeCard(this)">
+            <div class="absolute top-3 right-3">
+              <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center">
+                <div class="w-2.5 h-2.5 rounded-full bg-gray-900 hidden radio-dot"></div>
+              </div>
+            </div>
+            <span class="text-4xl font-light text-gray-900" style="font-family:'Playfair Display',serif;">30</span>
+            <div class="flex items-center gap-1 mt-1">
+              <div class="w-6 h-px bg-gray-300"></div>
+              <span class="text-[10px] tracking-[0.15em] text-gray-400 uppercase">ML</span>
+              <div class="w-6 h-px bg-gray-300"></div>
+            </div>
+            <p class="text-[11px] text-gray-400 mt-1">Sample size</p>
+          </div>
+          <!-- 50 ML -->
+          <div class="size-select-card" data-size="50ml" onclick="selectSizeCard(this)">
+            <div class="absolute top-3 right-3">
+              <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center">
+                <div class="w-2.5 h-2.5 rounded-full bg-gray-900 hidden radio-dot"></div>
+              </div>
+            </div>
+            <span class="text-4xl font-light text-gray-900" style="font-family:'Playfair Display',serif;">50</span>
+            <div class="flex items-center gap-1 mt-1">
+              <div class="w-6 h-px bg-gray-300"></div>
+              <span class="text-[10px] tracking-[0.15em] text-gray-400 uppercase">ML</span>
+              <div class="w-6 h-px bg-gray-300"></div>
+            </div>
+            <p class="text-[11px] text-gray-400 mt-1">Classic size</p>
+          </div>
+          <!-- 100 ML -->
+          <div class="size-select-card" data-size="100ml" onclick="selectSizeCard(this)">
+            <div class="absolute top-3 right-3">
+              <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex items-center justify-center">
+                <div class="w-2.5 h-2.5 rounded-full bg-gray-900 hidden radio-dot"></div>
+              </div>
+            </div>
+            <span class="text-4xl font-light text-gray-900" style="font-family:'Playfair Display',serif;">100</span>
+            <div class="flex items-center gap-1 mt-1">
+              <div class="w-6 h-px bg-gray-300"></div>
+              <span class="text-[10px] tracking-[0.15em] text-gray-400 uppercase">ML</span>
+              <div class="w-6 h-px bg-gray-300"></div>
+            </div>
+            <p class="text-[11px] text-gray-400 mt-1">Full size</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Choose Your Bottle -->
+      <div>
+        <p class="text-[11px] tracking-[0.2em] text-gray-500 uppercase mb-3">2. Choose Your Bottle</p>
+        <div class="flex flex-col gap-3">
+          <!-- Classic Rectangle -->
+          <div class="bottle-option-card selected" data-bottle="classic" onclick="selectBottleCard(this)">
+            <div class="w-20 h-20 flex-shrink-0 bg-gray-50 rounded-lg flex items-center justify-center">
+              <svg width="48" height="60" viewBox="0 0 48 60" fill="none">
+                <rect x="12" y="16" width="24" height="38" rx="2" stroke="#888" stroke-width="1.5" fill="none"/>
+                <rect x="18" y="8" width="12" height="10" rx="1" stroke="#888" stroke-width="1.2" fill="none"/>
+                <rect x="20" y="4" width="8" height="6" rx="1" stroke="#888" stroke-width="1" fill="none"/>
+                <line x1="16" y1="30" x2="32" y2="30" stroke="#ccc" stroke-width="0.5"/>
+              </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <h4 class="text-[13px] font-semibold tracking-[0.08em] text-gray-900 uppercase">Classic Rectangle</h4>
+                <span class="text-[13px] font-semibold text-gray-900 ml-2">₹200</span>
+              </div>
+              <p class="text-[12px] text-gray-400 mt-0.5">Clean. Timeless. Understated.</p>
+              <div class="flex items-center gap-3 mt-2 text-[10px] text-gray-400">
+                <span class="flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="2" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="0.8"/></svg> 30 ML</span>
+                <span>|</span>
+                <span class="flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="2" y="2" width="6" height="7" rx="1" stroke="currentColor" stroke-width="0.8"/></svg> Glass</span>
+                <span>|</span>
+                <span class="flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 2L5 5L7 7" stroke="currentColor" stroke-width="0.8" stroke-linecap="round"/></svg> Spray</span>
+              </div>
+            </div>
+            <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex-shrink-0 flex items-center justify-center ml-2">
+              <div class="w-2.5 h-2.5 rounded-full bg-gray-900 hidden radio-dot"></div>
+            </div>
+          </div>
+
+          <!-- Cylinder -->
+          <div class="bottle-option-card" data-bottle="cylinder" onclick="selectBottleCard(this)">
+            <div class="w-20 h-20 flex-shrink-0 bg-gray-50 rounded-lg flex items-center justify-center">
+              <svg width="48" height="60" viewBox="0 0 48 60" fill="none">
+                <ellipse cx="24" cy="48" rx="10" ry="3" stroke="#888" stroke-width="1.2" fill="none"/>
+                <rect x="14" y="14" width="20" height="34" rx="10" stroke="#888" stroke-width="1.5" fill="none"/>
+                <rect x="19" y="6" width="10" height="10" rx="2" stroke="#888" stroke-width="1" fill="none"/>
+                <rect x="21" y="2" width="6" height="6" rx="1" stroke="#888" stroke-width="0.8" fill="none"/>
+              </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <h4 class="text-[13px] font-semibold tracking-[0.08em] text-gray-900 uppercase">Cylinder</h4>
+                <span class="text-[13px] font-semibold text-gray-900 ml-2">₹250</span>
+              </div>
+              <p class="text-[12px] text-gray-400 mt-0.5">Modern. Sleek. Versatile.</p>
+              <div class="flex items-center gap-3 mt-2 text-[10px] text-gray-400">
+                <span class="flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="2" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="0.8"/></svg> 30 ML</span>
+                <span>|</span>
+                <span class="flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="2" y="2" width="6" height="7" rx="1" stroke="currentColor" stroke-width="0.8"/></svg> Glass</span>
+                <span>|</span>
+                <span class="flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 2L5 5L7 7" stroke="currentColor" stroke-width="0.8" stroke-linecap="round"/></svg> Spray</span>
+              </div>
+            </div>
+            <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex-shrink-0 flex items-center justify-center ml-2">
+              <div class="w-2.5 h-2.5 rounded-full bg-gray-900 hidden radio-dot"></div>
+            </div>
+          </div>
+
+          <!-- Rounded -->
+          <div class="bottle-option-card" data-bottle="rounded" onclick="selectBottleCard(this)">
+            <div class="w-20 h-20 flex-shrink-0 bg-gray-50 rounded-lg flex items-center justify-center">
+              <svg width="48" height="60" viewBox="0 0 48 60" fill="none">
+                <rect x="12" y="18" width="24" height="34" rx="8" stroke="#888" stroke-width="1.5" fill="none"/>
+                <rect x="18" y="8" width="12" height="12" rx="3" stroke="#888" stroke-width="1" fill="none"/>
+                <rect x="20" y="3" width="8" height="7" rx="2" stroke="#888" stroke-width="0.8" fill="none"/>
+              </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <h4 class="text-[13px] font-semibold tracking-[0.08em] text-gray-900 uppercase">Rounded</h4>
+                <span class="text-[13px] font-semibold text-gray-900 ml-2">₹300</span>
+              </div>
+              <p class="text-[12px] text-gray-400 mt-0.5">Soft curves. Elegant presence.</p>
+              <div class="flex items-center gap-3 mt-2 text-[10px] text-gray-400">
+                <span class="flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="2" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="0.8"/></svg> 30 ML</span>
+                <span>|</span>
+                <span class="flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="2" y="2" width="6" height="7" rx="1" stroke="currentColor" stroke-width="0.8"/></svg> Glass</span>
+                <span>|</span>
+                <span class="flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 2L5 5L7 7" stroke="currentColor" stroke-width="0.8" stroke-linecap="round"/></svg> Spray</span>
+              </div>
+            </div>
+            <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex-shrink-0 flex items-center justify-center ml-2">
+              <div class="w-2.5 h-2.5 rounded-full bg-gray-900 hidden radio-dot"></div>
+            </div>
+          </div>
+
+          <!-- Premium Square -->
+          <div class="bottle-option-card" data-bottle="premium" onclick="selectBottleCard(this)">
+            <div class="w-20 h-20 flex-shrink-0 bg-gray-50 rounded-lg flex items-center justify-center">
+              <svg width="48" height="60" viewBox="0 0 48 60" fill="none">
+                <rect x="10" y="16" width="28" height="38" rx="2" stroke="#888" stroke-width="1.5" fill="none"/>
+                <rect x="17" y="6" width="14" height="12" rx="1" stroke="#888" stroke-width="1.2" fill="none"/>
+                <rect x="19" y="2" width="10" height="6" rx="1" stroke="#888" stroke-width="0.8" fill="none"/>
+                <line x1="14" y1="32" x2="34" y2="32" stroke="#ccc" stroke-width="0.5"/>
+              </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <h4 class="text-[13px] font-semibold tracking-[0.08em] text-gray-900 uppercase">Premium Square</h4>
+                <span class="text-[13px] font-semibold text-gray-900 ml-2">₹400</span>
+              </div>
+              <p class="text-[12px] text-gray-400 mt-0.5">Bold. Refined. Premium feel.</p>
+              <div class="flex items-center gap-3 mt-2 text-[10px] text-gray-400">
+                <span class="flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="2" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="0.8"/></svg> 30 ML</span>
+                <span>|</span>
+                <span class="flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="2" y="2" width="6" height="7" rx="1" stroke="currentColor" stroke-width="0.8"/></svg> Glass</span>
+                <span>|</span>
+                <span class="flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 2L5 5L7 7" stroke="currentColor" stroke-width="0.8" stroke-linecap="round"/></svg> Spray</span>
+              </div>
+            </div>
+            <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex-shrink-0 flex items-center justify-center ml-2">
+              <div class="w-2.5 h-2.5 rounded-full bg-gray-900 hidden radio-dot"></div>
+            </div>
+          </div>
+
+          <!-- Luxe Collection -->
+          <div class="bottle-option-card" data-bottle="luxe" onclick="selectBottleCard(this)">
+            <div class="w-20 h-20 flex-shrink-0 bg-gray-50 rounded-lg flex items-center justify-center">
+              <svg width="48" height="60" viewBox="0 0 48 60" fill="none">
+                <rect x="8" y="14" width="32" height="40" rx="3" stroke="#888" stroke-width="1.5" fill="none"/>
+                <rect x="16" y="4" width="16" height="12" rx="2" stroke="#888" stroke-width="1.2" fill="none"/>
+                <rect x="18" y="0" width="12" height="6" rx="1" stroke="#888" stroke-width="0.8" fill="none"/>
+                <line x1="12" y1="30" x2="36" y2="30" stroke="#ccc" stroke-width="0.5"/>
+                <line x1="12" y1="38" x2="36" y2="38" stroke="#ccc" stroke-width="0.5"/>
+              </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <h4 class="text-[13px] font-semibold tracking-[0.08em] text-gray-900 uppercase">Luxe Collection</h4>
+                <span class="text-[13px] font-semibold text-gray-900 ml-2">₹500</span>
+              </div>
+              <p class="text-[12px] text-gray-400 mt-0.5">Sophisticated. Luxurious. Iconic.</p>
+              <div class="flex items-center gap-3 mt-2 text-[10px] text-gray-400">
+                <span class="flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="2" y="3" width="6" height="6" rx="1" stroke="currentColor" stroke-width="0.8"/></svg> 30 ML</span>
+                <span>|</span>
+                <span class="flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><rect x="2" y="2" width="6" height="7" rx="1" stroke="currentColor" stroke-width="0.8"/></svg> Glass</span>
+                <span>|</span>
+                <span class="flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M5 2L5 5L7 7" stroke="currentColor" stroke-width="0.8" stroke-linecap="round"/></svg> Spray</span>
+              </div>
+            </div>
+            <div class="w-5 h-5 rounded-full border-2 border-gray-300 flex-shrink-0 flex items-center justify-center ml-2">
+              <div class="w-2.5 h-2.5 rounded-full bg-gray-900 hidden radio-dot"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Continue button -->
+    <div class="absolute bottom-0 left-0 right-0 z-20 px-5 pb-6 pt-4" style="background: linear-gradient(transparent, #fff 30%);">
+      <button onclick="showScreen('screen-mixing')" class="w-full bg-gray-900 text-white rounded-full py-4 text-sm tracking-[0.15em] uppercase font-medium flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors max-w-lg mx-auto">
+        Continue <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M13 8L9 4M13 8L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Screen 3: Mixing Station -->
+  <div id="screen-mixing" class="screen hidden" style="background:#fff; height:100vh; display:flex; flex-direction:column; overflow:clip;">
+    <!-- Header -->
+    <div class="relative z-10 flex items-center justify-between pt-3 px-4">
+      <button onclick="showScreen('screen-size')" class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-gray-400 transition-colors">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="text-center">
+        <span class="text-xl tracking-[0.15em] text-gray-900" style="font-family:'Playfair Display',serif;">velm<span style="font-size:0.7em;">🌿</span>ra</span>
+      </div>
+      <button class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-gray-400 transition-colors">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 7V11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="8" cy="5.5" r="0.7" fill="currentColor"/></svg>
+      </button>
+    </div>
+
+    <!-- Step indicator -->
+    <div class="relative z-10 text-center mt-2">
+      <span class="inline-block border border-gray-300 rounded-full px-4 py-1 text-[11px] tracking-[0.15em] text-gray-500 uppercase">Step 2 of 4</span>
+    </div>
+
+    <!-- Title -->
+    <div class="relative z-10 text-center mt-2 px-6">
+      <h2 class="text-2xl text-gray-900" style="font-family:'Playfair Display',serif;">Create Your Scent</h2>
+      <p class="text-gray-400 text-xs mt-1">Add perfume oils to craft your unique fragrance</p>
+    </div>
+
+    <!-- Beaker section -->
+    <div class="text-center px-6 max-w-2xl mx-auto flex-1 flex flex-col items-center justify-center" style="min-height:0;">
+      <div class="relative inline-flex items-center justify-center">
+        <img src="assets/mixing-beaker.png?v=3" alt="Beaker" style="display:block; margin:0 auto; max-width:340px; width:85%; height:auto;">
+        <div style="position:absolute; bottom:-6px; left:50%; transform:translateX(-50%); width:50%; height:10px; background:radial-gradient(ellipse at center, rgba(0,0,0,0.13) 0%, rgba(0,0,0,0.06) 40%, transparent 70%); border-radius:50%; pointer-events:none;"></div>
+        <button onclick="resetMixing()" class="absolute flex flex-col items-center gap-1" style="right:-10px; top:50%; transform:translateY(-50%);">
+          <div class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-gray-400 transition-colors">
+            <svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9C3 5.68629 5.68629 3 9 3C12.3137 3 15 5.68629 15 9C15 12.3137 12.3137 15 9 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 5V9H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="text-[9px] tracking-[0.1em] text-gray-500 uppercase">Reset</span>
+        </button>
+      </div>
+
+      <!-- Total ML display -->
+      <div class="text-center mt-1">
+        <span id="total-mix-ml" class="text-3xl font-light text-gray-900" style="font-family:'Playfair Display',serif;">0</span>
+        <p class="text-[10px] tracking-[0.15em] text-gray-400 uppercase mt-0.5">ML Total Added</p>
+      </div>
+    </div>
+
+    <!-- Oil selection panel -->
+    <div class="relative z-10 mx-4 max-w-2xl mx-auto" style="background: #f9f9f9; border-radius: 14px; padding: 12px; position:relative;">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-[11px] tracking-[0.1em] text-gray-700 uppercase font-medium">Select Perfume Oil</h3>
+        <button class="text-[11px] text-gray-500 flex items-center gap-1 hover:text-gray-700">View All <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M4 2L8 6L4 10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+      <div id="oil-list">
+        <!-- Bergamot -->
+        <div class="oil-card">
+          <div class="flex flex-col items-center gap-2">
+            <div class="w-12 h-12 rounded-full overflow-hidden border border-gray-100 bg-gray-50 flex items-center justify-center" style="box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+              <span style="font-size:22px; line-height:1;">🍊</span>
+            </div>
+            <span class="text-[11px] text-gray-600 font-medium">Bergamot</span>
+            <div class="flex items-center gap-1">
+              <button onclick="changeOil('bergamot', -1)" class="oil-btn">-</button>
+              <span class="text-sm font-semibold text-gray-900 w-5 text-center oil-amount" data-oil="bergamot">0</span>
+              <button onclick="changeOil('bergamot', 1)" class="oil-btn">+</button>
+            </div>
+          </div>
+        </div>
+        <!-- Lavender -->
+        <div class="oil-card">
+          <div class="flex flex-col items-center gap-2">
+            <div class="w-12 h-12 rounded-full overflow-hidden border border-gray-100 bg-gray-50 flex items-center justify-center" style="box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+              <span style="font-size:22px; line-height:1;">💜</span>
+            </div>
+            <span class="text-[11px] text-gray-600 font-medium">Lavender</span>
+            <div class="flex items-center gap-1">
+              <button onclick="changeOil('lavender', -1)" class="oil-btn">-</button>
+              <span class="text-sm font-semibold text-gray-900 w-5 text-center oil-amount" data-oil="lavender">0</span>
+              <button onclick="changeOil('lavender', 1)" class="oil-btn">+</button>
+            </div>
+          </div>
+        </div>
+        <!-- Rose -->
+        <div class="oil-card">
+          <div class="flex flex-col items-center gap-2">
+            <div class="w-12 h-12 rounded-full overflow-hidden border border-gray-100 bg-gray-50 flex items-center justify-center" style="box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+              <span style="font-size:22px; line-height:1;">🌹</span>
+            </div>
+            <span class="text-[11px] text-gray-600 font-medium">Rose</span>
+            <div class="flex items-center gap-1">
+              <button onclick="changeOil('rose', -1)" class="oil-btn">-</button>
+              <span class="text-sm font-semibold text-gray-900 w-5 text-center oil-amount" data-oil="rose">0</span>
+              <button onclick="changeOil('rose', 1)" class="oil-btn">+</button>
+            </div>
+          </div>
+        </div>
+        <!-- Sandalwood -->
+        <div class="oil-card">
+          <div class="flex flex-col items-center gap-2">
+            <div class="w-12 h-12 rounded-full overflow-hidden border border-gray-100 bg-gray-50 flex items-center justify-center" style="box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+              <span style="font-size:22px; line-height:1;">🪵</span>
+            </div>
+            <span class="text-[11px] text-gray-600 font-medium">Sandalwood</span>
+            <div class="flex items-center gap-1">
+              <button onclick="changeOil('sandalwood', -1)" class="oil-btn">-</button>
+              <span class="text-sm font-semibold text-gray-900 w-5 text-center oil-amount" data-oil="sandalwood">0</span>
+              <button onclick="changeOil('sandalwood', 1)" class="oil-btn">+</button>
+            </div>
+          </div>
+        </div>
+        <!-- Jasmine -->
+        <div class="oil-card">
+          <div class="flex flex-col items-center gap-2">
+            <div class="w-12 h-12 rounded-full overflow-hidden border border-gray-100 bg-gray-50 flex items-center justify-center" style="box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+              <span style="font-size:22px; line-height:1;">🌸</span>
+            </div>
+            <span class="text-[11px] text-gray-600 font-medium">Jasmine</span>
+            <div class="flex items-center gap-1">
+              <button onclick="changeOil('jasmine', -1)" class="oil-btn">-</button>
+              <span class="text-sm font-semibold text-gray-900 w-5 text-center oil-amount" data-oil="jasmine">0</span>
+              <button onclick="changeOil('jasmine', 1)" class="oil-btn">+</button>
+            </div>
+          </div>
+        </div>
+        <!-- Vanilla -->
+        <div class="oil-card">
+          <div class="flex flex-col items-center gap-2">
+            <div class="w-12 h-12 rounded-full overflow-hidden border border-gray-100 bg-gray-50 flex items-center justify-center" style="box-shadow:0 1px 4px rgba(0,0,0,0.06);">
+              <span style="font-size:22px; line-height:1;">🍦</span>
+            </div>
+            <span class="text-[11px] text-gray-600 font-medium">Vanilla</span>
+            <div class="flex items-center gap-1">
+              <button onclick="changeOil('vanilla', -1)" class="oil-btn">-</button>
+              <span class="text-sm font-semibold text-gray-900 w-5 text-center oil-amount" data-oil="vanilla">0</span>
+              <button onclick="changeOil('vanilla', 1)" class="oil-btn">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom buttons -->
+    <div class="px-4 pb-4 pt-1" style="background:#fff; flex-shrink:0;">
+      <div class="flex gap-3 max-w-lg mx-auto">
+        <button onclick="addEthanol()" class="flex-1 border border-gray-900 text-gray-900 rounded-full py-4 text-[12px] tracking-[0.12em] uppercase font-medium flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5 2H11V6L13 14H3L5 6V2Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+          Add Ethanol
+        </button>
+        <button onclick="showScreen('screen-bottle')" class="flex-1 bg-gray-900 text-white rounded-full py-4 text-[12px] tracking-[0.12em] uppercase font-medium flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="4" y="5" width="8" height="9" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M6 5V3H10V5" stroke="currentColor" stroke-width="1.2"/></svg>
+          Select Bottle
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 4: Bottle It -->
+  <div id="screen-bottle" class="screen min-h-screen flex flex-col items-center justify-center px-6 hidden">
+    <div id="bottle-screen-content"></div>
+  </div>
+
+  <!-- Screen 5: Sticker Design Studio -->
+  <div id="screen-sticker" class="screen min-h-screen flex flex-col items-center px-6 py-10 hidden">
+    <p class="text-gold tracking-[0.3em] uppercase text-sm mb-4">Sticker Studio</p>
+    <h2 class="text-3xl md:text-4xl font-light tracking-wide mb-8">Design Your Label</h2>
+    <div id="sticker-layout" class="w-full max-w-5xl"></div>
+  </div>
+
+  <!-- Screen 6: Summary & Checkout -->
+  <div id="screen-pricing" class="screen min-h-screen flex flex-col items-center px-6 py-10 hidden">
+    <div id="pricing-content" class="w-full max-w-3xl"></div>
+  </div>
+
+  <!-- Screen 7: Order Confirmation -->
+  <div id="screen-confirmation" class="screen min-h-screen flex flex-col items-center justify-center px-6 hidden">
+    <div id="confirmation-content"></div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/mixing.js"></script>
+  <script src="js/sticker.js"></script>
+  <script src="js/pricing.js"></script>
+  <script>
+    (function initWelcomeParticles() {
+      var container = document.getElementById('welcome-particles');
+      if (!container) return;
+
+      /* Rose petals — 7 pieces */
+      var petalColors = ['rgba(232,160,191,0.45)', 'rgba(201,169,110,0.35)', 'rgba(244,211,94,0.25)', 'rgba(232,160,191,0.3)'];
+      for (var p = 0; p < 7; p++) {
+        var el = document.createElement('div');
+        el.className = 'petal';
+        var size = 14 + Math.random() * 12;
+        el.style.width = size + 'px';
+        el.style.height = (size * 1.3) + 'px';
+        el.style.left = (5 + Math.random() * 85) + '%';
+        el.style.top = (-10 + Math.random() * 15) + '%';
+        el.style.background = petalColors[p % petalColors.length];
+        el.style.filter = 'blur(' + (0.5 + Math.random()) + 'px)';
+        el.style.setProperty('--dur', (14 + Math.random() * 8) + 's');
+        el.style.setProperty('--delay', (Math.random() * 12) + 's');
+        container.appendChild(el);
+      }
+
+      /* Sparkles — 9 pieces */
+      for (var s = 0; s < 9; s++) {
+        var el = document.createElement('div');
+        el.className = 'sparkle';
+        var size = 3 + Math.random() * 3;
+        el.style.width = size + 'px';
+        el.style.height = size + 'px';
+        el.style.left = (5 + Math.random() * 90) + '%';
+        el.style.top = (20 + Math.random() * 60) + '%';
+        el.style.background = s % 3 === 0 ? 'rgba(201,169,110,0.6)' : 'rgba(245,240,232,0.5)';
+        el.style.boxShadow = '0 0 ' + (2 + Math.random() * 4) + 'px rgba(201,169,110,0.3)';
+        el.style.setProperty('--dur', (8 + Math.random() * 6) + 's');
+        el.style.setProperty('--delay', (Math.random() * 10) + 's');
+        container.appendChild(el);
+      }
+    })();
+  </script>
+</body>
+</html>
