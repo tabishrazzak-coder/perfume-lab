@@ -249,5 +249,11 @@ function showLoading(targetScreenId, duration) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+  function setVH() {
+    document.documentElement.style.setProperty('--real-vh', window.innerHeight + 'px');
+  }
+  setVH();
+  window.addEventListener('resize', setVH);
+
   showLoading('screen-size', 2000);
 });
