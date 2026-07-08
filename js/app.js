@@ -200,6 +200,31 @@ function resetAndStart() {
   showScreen('screen-welcome');
 }
 
+
+function selectSizeCard(card) {
+  document.querySelectorAll('.size-select-card').forEach(function(el) {
+    el.style.borderColor = '#e5e5e5';
+    var dot = el.querySelector('.radio-dot');
+    if (dot) dot.style.display = 'none';
+  });
+  card.style.borderColor = '#1a1a1a';
+  var dot = card.querySelector('.radio-dot');
+  if (dot) dot.style.display = 'block';
+  window.perfumeState.bottleSize = card.getAttribute('data-size');
+}
+
+function selectBottleCard(card) {
+  document.querySelectorAll('.bottle-option-card').forEach(function(el) {
+    el.style.borderColor = '#e5e5e5';
+    var dot = el.querySelector('.radio-dot');
+    if (dot) dot.style.display = 'none';
+  });
+  card.style.borderColor = '#1a1a1a';
+  var dot = card.querySelector('.radio-dot');
+  if (dot) dot.style.display = 'block';
+  window.perfumeState.bottleType = card.getAttribute('data-bottle');
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   var observer = new MutationObserver(function () {
     var screen = document.getElementById('screen-pricing');
@@ -248,5 +273,5 @@ document.addEventListener('DOMContentLoaded', function () {
   setVH();
   window.addEventListener('resize', setVH);
 
-  showLoading('screen-mixing', 2000);
+  showLoading('screen-size', 2000);
 });
