@@ -14,18 +14,7 @@ function showScreen(screenId) {
   }
 }
 
-function selectSize(size) {
-  window.perfumeState.bottleSize = size;
-}
 
-function selectSizeCard(card) {
-  var size = card.getAttribute('data-size');
-  document.querySelectorAll('.size-select-card').forEach(function (el) {
-    el.classList.remove('selected');
-  });
-  card.classList.add('selected');
-  window.perfumeState.bottleSize = size;
-}
 
 function selectBottleCard(card) {
   var bottle = card.getAttribute('data-bottle');
@@ -259,5 +248,5 @@ document.addEventListener('DOMContentLoaded', function () {
   setVH();
   window.addEventListener('resize', setVH);
 
-  showLoading('screen-size', 2000);
+  showLoading('screen-mixing', 2000);
 });
