@@ -164,13 +164,32 @@ function setBeakerLevel(total, capacity, color, opacity) {
   if (total === 0) {
     fill.style.height = '0%';
     fill.style.background = 'rgba(150,150,150,0.15)';
-    fill.style.borderTop = 'none';
+    fill.style.opacity = '1';
   } else {
     fill.style.height = fillPct + '%';
-    fill.style.background = color;
-    fill.style.opacity = '0.6';
-    fill.style.borderTop = '2px solid rgba(255,255,255,0.5)';
+    fill.style.background = 'linear-gradient(to bottom, ' + lightenColor(color, 0.3) + ' 0%, ' + color + ' 40%, ' + darkenColor(color, 0.15) + ' 100%)';
+    fill.style.opacity = '0.75';
   }
+}
+
+function lightenColor(hex, amt) {
+  var r = parseInt(hex.slice(1,3), 16);
+  var g = parseInt(hex.slice(3,5), 16);
+  var b = parseInt(hex.slice(5,7), 16);
+  r = Math.min(255, Math.round(r + (255 - r) * amt));
+  g = Math.min(255, Math.round(g + (255 - g) * amt));
+  b = Math.min(255, Math.round(b + (255 - b) * amt));
+  return '#' + ((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+}
+
+function darkenColor(hex, amt) {
+  var r = parseInt(hex.slice(1,3), 16);
+  var g = parseInt(hex.slice(3,5), 16);
+  var b = parseInt(hex.slice(5,7), 16);
+  r = Math.max(0, Math.round(r * (1 - amt)));
+  g = Math.max(0, Math.round(g * (1 - amt)));
+  b = Math.max(0, Math.round(b * (1 - amt)));
+  return '#' + ((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
 }
 
 function updateBeaker() {
