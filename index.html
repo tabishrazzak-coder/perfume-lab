@@ -29,7 +29,7 @@
   <div id="phone-frame" style="position:relative !important; width:100% !important; max-width:430px !important; height:100vh !important; margin:0 auto !important; overflow:hidden !important; background:#fff !important;">
 
   <!-- Screen 0: Loading -->
- <div id="screen-loading" class="screen overflow-hidden flex flex-col items-center justify-center" style="background:#FAFAFA; background-image: url('assets/loading-bg.png'); background-size: cover; background-position: center bottom right; padding-top: 0px;">
+ <div id="screen-loading" class="screen overflow-hidden flex flex-col items-center justify-center" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;display:none;overflow-y:auto;overflow-x:hidden;background:#fff;overflow:hidden;flex-direction:column;align-items:center;justify-content:center;" style="background:#FAFAFA; background-image: url('assets/loading-bg.png'); background-size: cover; background-position: center bottom right; padding-top: 0px;">
 
     <!-- Content -->
     <div class="relative z-10 flex flex-col items-center text-center px-6" style="gap: 0;">
@@ -59,11 +59,11 @@
   </div>
 
   <!-- Screen 1: Welcome -->
- <div id="screen-welcome" class="screen overflow-hidden">
+ <div id="screen-welcome" class="screen overflow-hidden" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;display:none;overflow-y:auto;overflow-x:hidden;background:#fff;">
   </div>
 
   <!-- Screen 2: Bottle Size Selection -->
- <div id="screen-size" class="screen overflow-hidden" style="background:#fff;">
+ <div id="screen-size" class="screen overflow-hidden" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;display:none;overflow-y:auto;overflow-x:hidden;background:#fff;" style="background:#fff;">
     <!-- Top bar -->
     <div class="relative z-10 flex items-center justify-between pt-4 px-4">
       <button onclick="showScreen('screen-loading')" class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-gray-400 transition-colors">
@@ -313,7 +313,7 @@
   </div>
 
   <!-- Screen 3: Mixing Station -->
- <div id="screen-mixing" class="screen" style="background:#fff; height:100%; flex-direction:column; overflow:clip;">
+ <div id="screen-mixing" class="screen" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;display:none;overflow-y:auto;overflow-x:hidden;background:#fff;flex-direction:column;overflow:clip;" style="background:#fff; height:100%; flex-direction:column; overflow:clip;">
     <!-- Header -->
     <div class="relative z-10 flex items-center justify-between pt-3 px-4">
       <button onclick="showScreen('screen-size')" class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-gray-400 transition-colors">
@@ -476,24 +476,24 @@
   </div>
 
   <!-- Screen 4: Bottle It -->
- <div id="screen-bottle" class="screen flex flex-col items-center justify-center px-6">
+ <div id="screen-bottle" class="screen flex flex-col items-center justify-center px-6" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;display:none;overflow-y:auto;overflow-x:hidden;background:#fff;flex-direction:column;align-items:center;justify-content:center;padding:0 1.5rem;">
     <div id="bottle-screen-content"></div>
   </div>
 
   <!-- Screen 5: Sticker Design Studio -->
- <div id="screen-sticker" class="screen flex flex-col items-center px-6 py-10">
+ <div id="screen-sticker" class="screen flex flex-col items-center px-6 py-10" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;display:none;overflow-y:auto;overflow-x:hidden;background:#fff;flex-direction:column;align-items:center;padding:0 1.5rem 2.5rem;">
     <p class="text-gold tracking-[0.3em] uppercase text-sm mb-4">Sticker Studio</p>
     <h2 class="text-3xl md:text-4xl font-light tracking-wide mb-8">Design Your Label</h2>
     <div id="sticker-layout" class="w-full max-w-5xl"></div>
   </div>
 
   <!-- Screen 6: Summary & Checkout -->
- <div id="screen-pricing" class="screen flex flex-col items-center px-6 py-10">
+ <div id="screen-pricing" class="screen flex flex-col items-center px-6 py-10" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;display:none;overflow-y:auto;overflow-x:hidden;background:#fff;flex-direction:column;align-items:center;padding:0 1.5rem 2.5rem;">
     <div id="pricing-content" class="w-full max-w-3xl"></div>
   </div>
 
   <!-- Screen 7: Order Confirmation -->
- <div id="screen-confirmation" class="screen flex flex-col items-center justify-center px-6">
+ <div id="screen-confirmation" class="screen flex flex-col items-center justify-center px-6" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;display:none;overflow-y:auto;overflow-x:hidden;background:#fff;flex-direction:column;align-items:center;justify-content:center;padding:0 1.5rem;">
     <div id="confirmation-content"></div>
   </div>
 
