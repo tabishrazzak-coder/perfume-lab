@@ -273,5 +273,5 @@ document.addEventListener('DOMContentLoaded', function () {
   setVH();
   window.addEventListener('resize', setVH);
 
-  showLoading('screen-size', 2000);
+  showLoading('screen-mixing', 2000);
 });
