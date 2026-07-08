@@ -1,10 +1,10 @@
 var OILS = [
-  { id: 'bergamot', name: 'Bergamot', emoji: '🍊', keyword: 'Fresh', color: '#F5A623' },
-  { id: 'lavender', name: 'Lavender', emoji: '💜', keyword: 'Calming', color: '#9B59B6' },
-  { id: 'rose', name: 'Rose', emoji: '🌹', keyword: 'Floral', color: '#E74C3C' },
-  { id: 'sandalwood', name: 'Sandalwood', emoji: '🪵', keyword: 'Warm', color: '#8B6914' },
-  { id: 'jasmine', name: 'Jasmine', emoji: '🌸', keyword: 'Sweet', color: '#F8BBD0' },
-  { id: 'vanilla', name: 'Vanilla', emoji: '🍦', keyword: 'Sweet', color: '#F5E6CC' },
+  { id: 'bergamot', name: 'Bergamot', emoji: '🍊', keyword: 'Fresh', color: '#C9A96E' },
+  { id: 'lavender', name: 'Lavender', emoji: '💜', keyword: 'Calming', color: '#C9A96E' },
+  { id: 'rose', name: 'Rose', emoji: '🌹', keyword: 'Floral', color: '#C9A96E' },
+  { id: 'sandalwood', name: 'Sandalwood', emoji: '🪵', keyword: 'Warm', color: '#C9A96E' },
+  { id: 'jasmine', name: 'Jasmine', emoji: '🌸', keyword: 'Sweet', color: '#C9A96E' },
+  { id: 'vanilla', name: 'Vanilla', emoji: '🍦', keyword: 'Sweet', color: '#C9A96E' },
 ];
 
 function getCapacity() {
