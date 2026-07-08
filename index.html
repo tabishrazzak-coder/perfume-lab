@@ -26,6 +26,8 @@
 </head>
 <body class="min-h-screen text-cream font-sans" style="background:#fff;">
 
+  <div id="phone-frame" style="position:relative; width:100%; max-width:430px; height:100vh; margin:0 auto; overflow:hidden; background:#fff;">
+
   <!-- Screen 0: Loading -->
   <div id="screen-loading" class="screen min-h-screen relative overflow-hidden flex flex-col items-center justify-center" style="background:#FAFAFA; background-image: url('assets/loading-bg.png'); background-size: cover; background-position: center bottom right; padding-top: 0px;">
 
@@ -302,7 +304,7 @@
   </div>
 
   <!-- Screen 3: Mixing Station -->
-  <div id="screen-mixing" class="screen" style="background:#fff; height:var(--real-vh, 100vh); flex-direction:column; overflow:clip;">
+  <div id="screen-mixing" class="screen" style="background:#fff; height:100%; flex-direction:column; overflow:clip;">
     <!-- Header -->
     <div class="relative z-10 flex items-center justify-between pt-3 px-4">
       <button onclick="showScreen('screen-size')" class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-gray-400 transition-colors">
@@ -484,6 +486,8 @@
   <!-- Screen 7: Order Confirmation -->
   <div id="screen-confirmation" class="screen min-h-screen flex flex-col items-center justify-center px-6">
     <div id="confirmation-content"></div>
+  </div>
+
   </div>
 
   <script src="js/app.js"></script>
