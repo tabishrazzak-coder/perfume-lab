@@ -5,9 +5,13 @@ window.perfumeState = {
 
 function showScreen(screenId) {
   document.querySelectorAll('.screen').forEach(function (el) {
-    el.classList.add('hidden');
+    el.style.display = 'none';
   });
-  document.getElementById(screenId).classList.remove('hidden');
+  var target = document.getElementById(screenId);
+  if (target) {
+    target.style.display = 'flex';
+    target.scrollTop = 0;
+  }
 }
 
 function selectSize(size) {
@@ -234,15 +238,15 @@ function showLoading(targetScreenId, duration) {
   }
 
   document.querySelectorAll('.screen').forEach(function (el) {
-    el.classList.add('hidden');
+    el.style.display = 'none';
   });
-  loading.classList.remove('hidden');
+  loading.style.display = 'flex';
 
   setTimeout(function () {
     loading.classList.add('screen-loading-out');
     setTimeout(function () {
-      loading.classList.add('hidden');
       loading.classList.remove('screen-loading-out');
+      loading.style.display = 'none';
       showScreen(targetScreenId);
     }, 400);
   }, duration);
