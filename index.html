@@ -181,7 +181,7 @@
 
     <!-- Continue button -->
     <div style="position:absolute;bottom:0;left:0;right:0;z-index:20;padding:0 20px 24px;background:linear-gradient(transparent, #fff 30%);">
-      <button onclick="showScreen('screen-mixing')" style="width:100%;background:#1a1a1a;color:#fff;border:none;border-radius:9999px;padding:16px;font-size:13px;letter-spacing:0.15em;text-transform:uppercase;font-weight:500;cursor:pointer;">CONTINUE →</button>
+      <button onclick="showScreen('screen-mixing'); updateMixingCapacity();" style="width:100%;background:#1a1a1a;color:#fff;border:none;border-radius:9999px;padding:16px;font-size:13px;letter-spacing:0.15em;text-transform:uppercase;font-weight:500;cursor:pointer;">CONTINUE →</button>
     </div>
   </div>
 
@@ -239,8 +239,8 @@
 
       <!-- Total ML display -->
       <div class="text-center mt-1">
-        <span id="total-mix-ml" class="text-3xl font-light text-gray-900" style="font-family:'Playfair Display',serif;">0</span>
-        <p class="text-[10px] tracking-[0.15em] text-gray-400 uppercase mt-0.5">ML Total Added</p>
+        <span id="total-mix-ml" class="text-3xl font-light text-gray-900" style="font-family:'Playfair Display',serif;">0/50 ml</span>
+        <p class="text-[10px] tracking-[0.15em] text-gray-400 uppercase mt-0.5">Total Added</p>
       </div>
     </div>
 
