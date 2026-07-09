@@ -35,7 +35,7 @@ function spawnDroplet(color) {
   var beakerEl = mixingScreen.querySelector('img[alt="Beaker"]');
 
   var cx = screenRect.left + screenRect.width / 2;
-  var startY = screenRect.top + 80;
+  var startY = screenRect.top + 4;
 
   var impactY;
   var surfaceEl = document.getElementById('beaker-fill');
@@ -188,7 +188,7 @@ function createWaterPour() {
   var beakerEl = mixingScreen.querySelector('img[alt="Beaker"]');
 
   var cx = screenRect.left + screenRect.width / 2;
-  var startY = screenRect.top + 80;
+  var startY = screenRect.top + 4;
   var beakerRect, impactY;
   if (beakerEl) {
     beakerRect = beakerEl.getBoundingClientRect();
