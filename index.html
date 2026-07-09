@@ -71,7 +71,7 @@
 
 
   <!-- Screen 3: Mixing Station -->
- <div id="screen-mixing" class="screen" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;display:none;overflow-y:auto;overflow-x:hidden;background:#fff;flex-direction:column;overflow:clip;" style="background:#fff; height:100%; flex-direction:column; overflow:clip;">
+ <div id="screen-mixing" class="screen" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;display:none;overflow:hidden;background:#fff;flex-direction:column;">
     <!-- Header -->
     <div class="relative z-10 flex items-center justify-between pt-3 px-4">
       <button onclick="goBack()" class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-gray-400 transition-colors">
@@ -97,9 +97,9 @@
     </div>
 
     <!-- Beaker section -->
-    <div class="text-center px-6 max-w-2xl mx-auto flex-1 flex flex-col items-center justify-center" style="min-height:0;">
-      <div class="relative inline-flex items-center justify-center">
-        <img src="assets/mixing-beaker.png?v=3" alt="Beaker" style="display:block; margin:0 auto; max-width:min(340px, 82%); width:auto; height:auto;">
+    <div class="text-center px-6 max-w-2xl mx-auto flex flex-col items-center justify-center" style="flex:1 1 0; min-height:0; max-height:none;">
+      <div class="relative inline-flex items-center justify-center" style="max-height:min(38vh, 280px);">
+        <img src="assets/mixing-beaker.png?v=3" alt="Beaker" style="display:block; margin:0 auto; max-width:min(280px, 68%); max-height:min(38vh, 280px); width:auto; height:auto; object-fit:contain;">
         <div id="beaker-fill" style="position:absolute; left:24%; width:49%; height:0%; bottom:18%; border-radius:0 0 22px 22px; transition:height 0.4s ease; pointer-events:none; mix-blend-mode:multiply; overflow:hidden;">
   <div id="liquid-body" style="position:absolute; bottom:0; left:0; right:0; top:8px; opacity:0.75;"></div>
   <div id="wave-layer1" style="position:absolute; top:0; left:-100%; width:300%; height:14px; opacity:1;"></div>
@@ -125,14 +125,14 @@
       </div>
 
       <!-- Total ML display -->
-      <div class="text-center mt-1">
-        <span id="total-mix-ml" class="text-3xl font-light text-gray-900" style="font-family:'Playfair Display',serif;">0/50 ml</span>
+      <div class="text-center mt-1 flex-shrink-0">
+        <span id="total-mix-ml" class="text-2xl font-light text-gray-900" style="font-family:'Playfair Display',serif;">0/100 ml</span>
         <p class="text-[10px] tracking-[0.15em] text-gray-400 uppercase mt-0.5">Total Added</p>
       </div>
     </div>
 
     <!-- Oil selection panel -->
-    <div class="relative z-10 mx-4 max-w-2xl mx-auto" style="background: #f9f9f9; border-radius: 14px; padding: 12px; position:relative;">
+    <div class="relative z-10 mx-4 max-w-2xl mx-auto flex-shrink-0" style="background: #f9f9f9; border-radius: 14px; padding: 12px; position:relative;">
       <div class="flex items-center justify-between mb-2">
         <h3 class="text-[11px] tracking-[0.1em] text-gray-700 uppercase font-medium">Select Perfume Oil</h3>
         <button class="text-[11px] text-gray-500 flex items-center gap-1 hover:text-gray-700">View All <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M4 2L8 6L4 10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -226,7 +226,7 @@
     </div>
 
     <!-- Bottom buttons -->
-    <div class="px-4 pb-4 pt-1" style="background:#fff; flex-shrink:0;">
+    <div class="px-4 pb-4 pt-1 flex-shrink-0" style="background:#fff;">
       <div class="flex gap-3 max-w-lg mx-auto">
         <button onclick="addEthanol()" class="flex-1 border border-gray-900 text-gray-900 rounded-full py-4 text-[12px] tracking-[0.12em] uppercase font-medium flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5 2H11V6L13 14H3L5 6V2Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>

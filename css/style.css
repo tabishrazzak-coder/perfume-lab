@@ -1073,12 +1073,15 @@ button:active {
   .oil-card span[style*="font-size:22px"] { font-size: 16px !important; }
   .oil-btn { width: 20px; height: 20px; min-width: 20px; font-size: 11px; }
   .oil-amount { font-size: 12px !important; }
-  #total-mix-ml { font-size: 24px !important; }
+  #total-mix-ml { font-size: 20px !important; }
+  #screen-mixing img[alt="Beaker"] { max-width: 60vw !important; max-height: 32vh !important; }
+  #screen-mixing .oil-panel-header { display: none; }
 }
 
 /* Small phones (375-430px) - default target */
 @media (min-width: 375px) and (max-width: 430px) {
   #oil-list .oil-card { width: clamp(85px, 21vw, 100px); }
+  #screen-mixing img[alt="Beaker"] { max-width: 65vw !important; max-height: 36vh !important; }
 }
 
 /* Large phones / phablets (431-600px) */
