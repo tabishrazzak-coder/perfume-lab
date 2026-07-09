@@ -700,6 +700,54 @@
   animation: splash-arc 0.48s ease-out forwards;
 }
 
+/* Mix button */
+.mix-btn-icon {
+  border-color: #C9A96E;
+  color: #C9A96E;
+}
+
+.mix-btn-label {
+  color: #C9A96E;
+}
+
+.mix-btn-glow .mix-btn-icon {
+  animation: mix-glow 1.15s ease-in-out infinite;
+}
+
+.mix-btn-glow .mix-btn-label {
+  animation: mix-label-pulse 1.15s ease-in-out infinite;
+}
+
+@keyframes mix-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(201, 169, 110, 0);
+    transform: scale(1);
+    background: rgba(201, 169, 110, 0.06);
+  }
+  50% {
+    box-shadow: 0 0 14px 3px rgba(201, 169, 110, 0.65);
+    transform: scale(1.14);
+    background: rgba(201, 169, 110, 0.18);
+  }
+}
+
+@keyframes mix-label-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Beaker mixing turbulence */
+.beaker-mixing {
+  animation: beaker-swirl 0.34s ease-in-out infinite;
+}
+
+@keyframes beaker-swirl {
+  0%, 100% { transform: translateX(0) skewX(0deg); }
+  20% { transform: translateX(-2.5px) skewX(-2.2deg); }
+  50% { transform: translateX(2.5px) skewX(2.2deg); }
+  80% { transform: translateX(-1.5px) skewX(-1.4deg); }
+}
+
 .pour-layer {
   position: fixed;
   inset: 0;

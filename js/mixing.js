@@ -126,9 +126,15 @@ function changeOil(oilId, delta) {
 
 function resetMixing() {
   window.perfumeState.mix = {};
+  window.perfumeState.mixed = false;
   document.querySelectorAll('.oil-amount').forEach(function(el) {
     el.textContent = '0';
   });
+  var mixBtn = document.getElementById('btn-mix');
+  if (mixBtn) {
+    mixBtn.style.display = 'none';
+    mixBtn.classList.remove('mix-btn-glow');
+  }
   updateTotalDisplay();
   updateBeaker();
 }
@@ -176,6 +182,11 @@ function addEthanol() {
       if (splashTimer) clearInterval(splashTimer);
       if (pour) pour.stop();
       ethanolPouring = false;
+      var mixBtn = document.getElementById('btn-mix');
+      if (mixBtn) {
+        mixBtn.style.display = 'flex';
+        mixBtn.classList.add('mix-btn-glow');
+      }
     }
   }
   requestAnimationFrame(step);
@@ -443,6 +454,66 @@ function updateBeaker() {
   var total = getTotalMl();
   var capacity = getCapacity();
   setBeakerLevel(total === 0 ? 0 : total, capacity, total === 0 ? '' : blendColors(), total === 0 ? 1 : 0.85);
+  updateEthanolLayer();
+}
+
+function updateEthanolLayer() {
+  var el = document.getElementById('ethanol-layer');
+  if (!el) return;
+  var mix = window.perfumeState.mix || {};
+  var alcohol = mix.alcohol || 0;
+  var total = getTotalMl();
+
+  if (alcohol <= 0 || total <= 0 || window.perfumeState.mixed) {
+    el.style.height = '0%';
+    el.style.opacity = '0';
+    return;
+  }
+
+  var pct = Math.min(alcohol / total, 1) * 100;
+  el.style.background = 'linear-gradient(to bottom, rgba(230,244,251,0.96) 0%, rgba(206,232,246,0.95) 55%, rgba(184,217,237,0.92) 100%)';
+  el.style.borderBottom = '1.5px solid rgba(150,190,215,0.55)';
+  el.style.boxShadow = 'inset 0 6px 10px rgba(255,255,255,0.45)';
+  el.style.height = pct + '%';
+  el.style.opacity = '1';
+}
+
+var mixingInProgress = false;
+
+function mixLiquid() {
+  if (mixingInProgress || window.perfumeState.mixed) return;
+  var mix = window.perfumeState.mix || {};
+  if (!mix.alcohol) return;
+
+  mixingInProgress = true;
+  var mixBtn = document.getElementById('btn-mix');
+  if (mixBtn) mixBtn.classList.remove('mix-btn-glow');
+
+  var fill = document.getElementById('beaker-fill');
+  var ethanol = document.getElementById('ethanol-layer');
+  var w1 = document.getElementById('wave-layer1');
+  var w2 = document.getElementById('wave-layer2');
+
+  if (fill) fill.classList.add('beaker-mixing');
+  if (w1) w1.style.animation = 'wave-drift 0.5s linear infinite';
+  if (w2) w2.style.animation = 'wave-drift 0.7s linear infinite';
+
+  // ethanol blends down into the oil
+  if (ethanol) {
+    ethanol.style.transition = 'height 1.1s ease, opacity 1.1s ease';
+    ethanol.style.height = '0%';
+    ethanol.style.opacity = '0';
+  }
+
+  setTimeout(function () {
+    window.perfumeState.mixed = true;
+    if (fill) fill.classList.remove('beaker-mixing');
+    if (w1) w1.style.animation = 'wave-drift 3s linear infinite';
+    if (w2) w2.style.animation = 'wave-drift 4.5s linear infinite';
+    if (mixBtn) mixBtn.style.display = 'none';
+    updateBeaker();
+    mixingInProgress = false;
+  }, 1400);
 }
 
 function addAlcohol() {

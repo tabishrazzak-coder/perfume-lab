@@ -101,6 +101,7 @@
   <div id="liquid-radial" style="position:absolute; top:0; left:0; right:0; height:40%; pointer-events:none;"></div>
   <div id="liquid-highlight1" style="position:absolute; top:12%; left:12%; width:40%; height:70%; border-radius:40%; pointer-events:none; filter:blur(5px); mix-blend-mode:screen;"></div>
   <div id="liquid-highlight2" style="position:absolute; top:25%; right:8%; width:18%; height:45%; border-radius:40%; pointer-events:none; filter:blur(6px); mix-blend-mode:screen;"></div>
+  <div id="ethanol-layer" style="position:absolute; top:0; left:0; right:0; height:0%; opacity:0; pointer-events:none; transition:height 0.4s ease, opacity 0.4s ease;"></div>
 </div>
         <div style="position:absolute; bottom:-6px; left:50%; transform:translateX(-50%); width:50%; height:10px; background:radial-gradient(ellipse at center, rgba(0,0,0,0.13) 0%, rgba(0,0,0,0.06) 40%, transparent 70%); border-radius:50%; pointer-events:none;"></div>
         <button onclick="resetMixing()" class="absolute flex flex-col items-center gap-1" style="right:-10px; top:50%; transform:translateY(-50%);">
@@ -108,6 +109,12 @@
             <svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 9C3 5.68629 5.68629 3 9 3C12.3137 3 15 5.68629 15 9C15 12.3137 12.3137 15 9 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 5V9H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </div>
           <span class="text-[9px] tracking-[0.1em] text-gray-500 uppercase">Reset</span>
+        </button>
+        <button id="btn-mix" onclick="mixLiquid()" class="absolute flex flex-col items-center gap-1" style="left:-10px; top:50%; transform:translateY(-50%); display:none;">
+          <div class="mix-btn-icon w-8 h-8 rounded-full border flex items-center justify-center transition-colors">
+            <svg width="15" height="15" viewBox="0 0 18 18" fill="none"><path d="M9 2V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5 11C5 9 6.8 8 9 8C11.2 8 13 9 13 11C13 13.5 11.2 16 9 16C6.8 16 5 13.5 5 11Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M7.5 11.5C8 11 8.5 11.5 9 11C9.5 10.5 10 11 10.5 11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          </div>
+          <span class="text-[9px] tracking-[0.1em] uppercase mix-btn-label">Mix</span>
         </button>
       </div>
 
