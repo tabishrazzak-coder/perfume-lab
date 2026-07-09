@@ -1,3 +1,162 @@
+/* =============================================
+   Mobile App Structure
+   ============================================= */
+
+*, *::before, *::after {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+html {
+  height: 100%;
+  overflow: hidden;
+  background: #fff;
+  overscroll-behavior: none;
+}
+
+body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  position: fixed;
+  width: 100%;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+#app {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Screen transition container */
+.screen {
+  position: absolute !important;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  will-change: transform, opacity;
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+
+.screen::-webkit-scrollbar { display: none; }
+.screen { scrollbar-width: none; }
+
+/* Slide transition */
+.screen-enter {
+  animation: screen-slide-in 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.screen-exit {
+  animation: screen-slide-out 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes screen-slide-in {
+  from { transform: translateX(40px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes screen-slide-out {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(-40px); opacity: 0; }
+}
+
+.screen-enter-back {
+  animation: screen-slide-in-back 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.screen-exit-back {
+  animation: screen-slide-out-back 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes screen-slide-in-back {
+  from { transform: translateX(-40px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes screen-slide-out-back {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(40px); opacity: 0; }
+}
+
+/* Fade transition (for loading -> first screen) */
+.screen-fade-in {
+  animation: screen-fade-in 0.4s ease forwards;
+}
+
+@keyframes screen-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Bottom Tab Bar */
+#bottom-tab-bar {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+#bottom-tab-bar.hidden-bar {
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tab-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  transition: color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tab-btn:active {
+  transform: scale(0.92);
+  transition: transform 0.1s ease;
+}
+
+.tab-btn.active {
+  color: #1a1a1a;
+}
+
+.tab-btn svg {
+  transition: transform 0.2s ease;
+}
+
+.tab-btn.active svg {
+  transform: scale(1.1);
+}
+
+/* Button tap feedback */
+button:active {
+  transform: scale(0.97);
+  transition: transform 0.1s ease;
+}
+
+/* Smooth scrolling inside screens */
+.screen {
+  scroll-behavior: smooth;
+}
+
+/* Prevent text selection on interactive elements */
+.tab-btn, .oil-btn, .oil-card, button {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
 @keyframes pour-stream {
   0% { opacity: 0; transform: translateY(-20px); }
   10% { opacity: 1; transform: translateY(0); }

@@ -3,15 +3,92 @@ window.perfumeState = {
   bottleType: 'classic',
 };
 
-function showScreen(screenId) {
+var _currentScreen = null;
+var _screenHistory = [];
+var _tabScreens = ['screen-mixing', 'screen-sticker', 'screen-pricing'];
+var _noTabScreens = ['screen-loading', 'screen-welcome', 'screen-confirmation', 'screen-bottle'];
+
+function showScreen(screenId, opts) {
+  opts = opts || {};
+  var target = document.getElementById(screenId);
+  if (!target) return;
+
+  var prev = _currentScreen ? document.getElementById(_currentScreen) : null;
+  var isBack = opts.back || false;
+  var skipAnim = opts.skipAnim || false;
+  var isTab = _tabScreens.indexOf(screenId) !== -1;
+
+  // determine direction
+  var forward = true;
+  if (isBack) {
+    forward = false;
+  } else if (_currentScreen && _tabScreens.indexOf(_currentScreen) !== -1 && isTab) {
+    var fromIdx = _tabScreens.indexOf(_currentScreen);
+    var toIdx = _tabScreens.indexOf(screenId);
+    forward = toIdx >= fromIdx;
+  }
+
+  // hide all screens
   document.querySelectorAll('.screen').forEach(function (el) {
     el.style.display = 'none';
+    el.classList.remove('screen-enter', 'screen-exit', 'screen-enter-back', 'screen-exit-back', 'screen-fade-in');
   });
-  var target = document.getElementById(screenId);
-  if (target) {
+
+  // show target
+  if (skipAnim) {
     target.style.display = 'flex';
-    target.scrollTop = 0;
+  } else {
+    target.style.display = 'flex';
+    target.classList.add(forward ? 'screen-enter' : 'screen-enter-back');
   }
+
+  target.scrollTop = 0;
+  _currentScreen = screenId;
+
+  // track history
+  if (!isBack && _screenHistory[_screenHistory.length - 1] !== screenId) {
+    _screenHistory.push(screenId);
+  }
+  if (isBack) _screenHistory.pop();
+
+  // update tab bar
+  updateTabBar(screenId);
+
+  // trigger mixing capacity update
+  if (screenId === 'screen-mixing' && typeof updateMixingCapacity === 'function') {
+    updateMixingCapacity();
+  }
+}
+
+function goBack() {
+  if (_screenHistory.length > 1) {
+    _screenHistory.pop();
+    var prev = _screenHistory[_screenHistory.length - 1];
+    showScreen(prev, { back: true });
+  } else {
+    showScreen('screen-loading', { skipAnim: true });
+  }
+}
+
+function updateTabBar(screenId) {
+  var bar = document.getElementById('bottom-tab-bar');
+  if (!bar) return;
+
+  var showBar = _tabScreens.indexOf(screenId) !== -1;
+  if (showBar) {
+    bar.style.display = '';
+    bar.classList.remove('hidden-bar');
+  } else {
+    bar.classList.add('hidden-bar');
+    setTimeout(function () {
+      if (bar.classList.contains('hidden-bar')) bar.style.display = 'none';
+    }, 300);
+  }
+
+  // update active tab
+  document.querySelectorAll('.tab-btn').forEach(function (btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-tab') === screenId);
+  });
 }
 
 
@@ -188,8 +265,9 @@ function renderConfirmation() {
 }
 
 function resetAndStart() {
-  window.perfumeState = { bottleSize: null };
-  showScreen('screen-welcome');
+  window.perfumeState = { bottleSize: '100ml', bottleType: 'classic' };
+  _screenHistory = [];
+  showLoading('screen-mixing', 1500);
 }
 
 
@@ -222,14 +300,14 @@ function selectBottle(el) {
 document.addEventListener('DOMContentLoaded', function () {
   var observer = new MutationObserver(function () {
     var screen = document.getElementById('screen-pricing');
-    if (screen && !screen.classList.contains('hidden')) {
+    if (screen && screen.style.display !== 'none') {
       renderSummaryScreen();
     }
   });
 
   var target = document.getElementById('screen-pricing');
   if (target) {
-    observer.observe(target, { attributes: true, attributeFilter: ['class'] });
+    observer.observe(target, { attributes: true, attributeFilter: ['style'] });
   }
 });
 
@@ -241,7 +319,7 @@ function showLoading(targetScreenId, duration) {
   duration = duration || 1800;
   var loading = document.getElementById('screen-loading');
   if (!loading) {
-    showScreen(targetScreenId);
+    showScreen(targetScreenId, { skipAnim: true });
     return;
   }
 
@@ -256,9 +334,8 @@ function showLoading(targetScreenId, duration) {
       loading.classList.remove('screen-loading-out');
       loading.style.display = 'none';
       showScreen(targetScreenId);
-      if (targetScreenId === 'screen-mixing' && typeof updateMixingCapacity === 'function') {
-        updateMixingCapacity();
-      }
+      _currentScreen = targetScreenId;
+      _screenHistory = [targetScreenId];
     }, 400);
   }, duration);
 }
