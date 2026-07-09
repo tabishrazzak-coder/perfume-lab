@@ -6,18 +6,36 @@ var STICKER_COLORS = [
   '#B497D6', '#F4D35E', '#C68642', '#1A1A1A', '#D4E6D4', '#E6D4D4'
 ];
 
-function initStickerCanvas() {
+function getCanvasSize() {
+  var wrapper = document.getElementById('sticker-canvas-wrapper');
+  if (!wrapper) return { w: 350, h: 350 };
+  var w = wrapper.clientWidth - 4; // minus border
+  w = Math.min(w, 480);
+  w = Math.max(w, 200);
+  return { w: w, h: w };
+}
+
+function initStickerCanvas(restoreJson) {
   if (stickerCanvas) {
+    if (!restoreJson) restoreJson = JSON.stringify(stickerCanvas.toJSON());
     stickerCanvas.dispose();
   }
 
+  var size = getCanvasSize();
+
   stickerCanvas = new fabric.Canvas('sticker-canvas', {
-    width: 350,
-    height: 350,
+    width: size.w,
+    height: size.h,
     backgroundColor: '#FFFFFF',
     selection: true,
     preserveObjectStacking: true,
   });
+
+  var el = document.getElementById('sticker-canvas');
+  if (el) {
+    el.style.width = size.w + 'px';
+    el.style.height = size.h + 'px';
+  }
 
   stickerCanvas.on('selection:created', updateLayerPanel);
   stickerCanvas.on('selection:updated', updateLayerPanel);
@@ -26,7 +44,14 @@ function initStickerCanvas() {
   stickerCanvas.on('object:added', function () { saveStickerState(); updateUndoRedoButtons(); });
   stickerCanvas.on('object:removed', function () { saveStickerState(); updateUndoRedoButtons(); });
 
-  saveStickerState();
+  if (restoreJson) {
+    stickerCanvas.loadFromJSON(restoreJson, function () {
+      stickerCanvas.renderAll();
+      saveStickerState();
+    });
+  } else {
+    saveStickerState();
+  }
 }
 
 function saveStickerState() {
@@ -195,14 +220,17 @@ function showBorderPicker() {
 
 function addBorder(type) {
   if (!stickerCanvas) return;
-  // remove existing border rect
   stickerCanvas.getObjects().forEach(function (o) {
     if (o._isBorder) stickerCanvas.remove(o);
   });
   if (type === 'none') { stickerCanvas.renderAll(); return; }
 
-  var w = 340, h = 340, x = 5, y = 5;
-  var opts = { left: x, top: y, width: w, height: h, fill: 'transparent', selectable: false, evented: false, _isBorder: true, rx: type === 'rounded' ? 15 : 5, ry: type === 'rounded' ? 15 : 5 };
+  var cw = stickerCanvas.width || 350;
+  var ch = stickerCanvas.height || 350;
+  var pad = Math.max(5, cw * 0.015);
+  var w = cw - pad * 2;
+  var h = ch - pad * 2;
+  var opts = { left: pad, top: pad, width: w, height: h, fill: 'transparent', selectable: false, evented: false, _isBorder: true, rx: type === 'rounded' ? cw * 0.04 : 5, ry: type === 'rounded' ? ch * 0.04 : 5 };
 
   if (type === 'solid' || type === 'rounded' || type === 'double' || type === 'dotted') {
     opts.stroke = '#1a1a1a';
@@ -304,16 +332,27 @@ function setupStickerScreen() {
   }, 100);
 }
 
+var _stickerResizeTimer = null;
+function handleStickerResize() {
+  if (_stickerResizeTimer) clearTimeout(_stickerResizeTimer);
+  _stickerResizeTimer = setTimeout(function () {
+    var screen = document.getElementById('screen-sticker');
+    if (screen && screen.style.display !== 'none') {
+      initStickerCanvas();
+    }
+  }, 300);
+}
+
 document.addEventListener('DOMContentLoaded', function () {
   var target = document.getElementById('screen-sticker');
   if (!target) return;
 
   var observer = new MutationObserver(function () {
     if (target.style.display !== 'none' && target.style.display !== '') {
-      if (!stickerCanvas || !stickerCanvas.lowerCanvasEl) {
-        setupStickerScreen();
-      }
+      setupStickerScreen();
     }
   });
   observer.observe(target, { attributes: true, attributeFilter: ['style'] });
+
+  window.addEventListener('resize', handleStickerResize);
 });
