@@ -16,14 +16,6 @@ function showScreen(screenId) {
 
 
 
-function selectBottleCard(card) {
-  var bottle = card.getAttribute('data-bottle');
-  document.querySelectorAll('.bottle-option-card').forEach(function (el) {
-    el.classList.remove('selected');
-  });
-  card.classList.add('selected');
-  window.perfumeState.bottleType = bottle;
-}
 
 function renderSummaryScreen() {
   var container = document.getElementById('pricing-content');
@@ -201,50 +193,10 @@ function resetAndStart() {
 }
 
 
-function selectSizeCard(card) {
-  document.querySelectorAll('.size-select-card').forEach(function(el) {
-    el.style.borderColor = '#e5e5e5';
-    var dot = el.querySelector('.radio-dot');
-    if (dot) dot.style.display = 'none';
-  });
-  card.style.borderColor = '#1a1a1a';
-  var dot = card.querySelector('.radio-dot');
-  if (dot) dot.style.display = 'block';
-  window.perfumeState.bottleSize = card.getAttribute('data-size');
-}
-
-function selectBottleCard(card) {
-  document.querySelectorAll('.bottle-option-card').forEach(function(el) {
-    el.style.borderColor = '#e5e5e5';
-    var dot = el.querySelector('.radio-dot');
-    if (dot) dot.style.display = 'none';
-  });
-  card.style.borderColor = '#1a1a1a';
-  var dot = card.querySelector('.radio-dot');
-  if (dot) dot.style.display = 'block';
-  window.perfumeState.bottleType = card.getAttribute('data-bottle');
-}
 
 
-function selectSize(el) {
-  document.querySelectorAll('[data-size]').forEach(function(card) {
-    card.style.borderColor = '#e5e5e5';
-    card.querySelector('.size-dot').style.display = 'none';
-  });
-  el.style.borderColor = '#1a1a1a';
-  el.querySelector('.size-dot').style.display = 'block';
-  window.perfumeState.bottleSize = el.getAttribute('data-size');
-}
 
-function selectBottle(el) {
-  document.querySelectorAll('[data-bottle]').forEach(function(card) {
-    card.style.borderColor = '#e5e5e5';
-    card.querySelector('.bottle-dot').style.display = 'none';
-  });
-  el.style.borderColor = '#1a1a1a';
-  el.querySelector('.bottle-dot').style.display = 'block';
-  window.perfumeState.bottleType = el.getAttribute('data-bottle');
-}
+
 
 document.addEventListener('DOMContentLoaded', function () {
   var observer = new MutationObserver(function () {
@@ -294,5 +246,5 @@ document.addEventListener('DOMContentLoaded', function () {
   setVH();
   window.addEventListener('resize', setVH);
 
-  showLoading('screen-bottle-select', 2000);
+  showLoading('screen-mixing', 2000);
 });
