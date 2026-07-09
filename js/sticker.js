@@ -1,7 +1,9 @@
 var stickerCanvas = null;
+var stickerHistory = [];
+var stickerHistoryIndex = -1;
 var STICKER_COLORS = [
-  '#C9A96E', '#F5F0E8', '#0A0A0A', '#E8A0BF', '#4A3728',
-  '#B497D6', '#F4D35E', '#C68642', '#FFFFFF', '#1A1A1A'
+  '#FFFFFF', '#F5F0E8', '#C9A96E', '#0A0A0A', '#E8A0BF', '#4A3728',
+  '#B497D6', '#F4D35E', '#C68642', '#1A1A1A', '#D4E6D4', '#E6D4D4'
 ];
 
 function initStickerCanvas() {
@@ -9,39 +11,106 @@ function initStickerCanvas() {
     stickerCanvas.dispose();
   }
 
-  stickerCanvas = new fabric.Canvas('sticker-fabric', {
-    width: 240,
-    height: 320,
-    backgroundColor: 'rgba(245,240,232,0.05)',
+  stickerCanvas = new fabric.Canvas('sticker-canvas', {
+    width: 350,
+    height: 350,
+    backgroundColor: '#FFFFFF',
     selection: true,
     preserveObjectStacking: true,
   });
 
-  stickerCanvas.on('selection:created', updateColorPickerActive);
-  stickerCanvas.on('selection:updated', updateColorPickerActive);
-  stickerCanvas.on('selection:cleared', updateColorPickerActive);
+  stickerCanvas.on('selection:created', updateLayerPanel);
+  stickerCanvas.on('selection:updated', updateLayerPanel);
+  stickerCanvas.on('selection:cleared', updateLayerPanel);
+  stickerCanvas.on('object:modified', saveStickerState);
+  stickerCanvas.on('object:added', function () { saveStickerState(); updateUndoRedoButtons(); });
+  stickerCanvas.on('object:removed', function () { saveStickerState(); updateUndoRedoButtons(); });
+
+  saveStickerState();
 }
 
-function updateColorPickerActive() {
-  var obj = stickerCanvas.getActiveObject();
-  if (!obj) return;
-  var fill = obj.fill || '#C9A96E';
-  if (typeof fill !== 'string') return;
-  document.querySelectorAll('.color-swatch').forEach(function (el) {
-    el.classList.toggle('active', el.dataset.color === fill);
+function saveStickerState() {
+  if (!stickerCanvas) return;
+  var json = JSON.stringify(stickerCanvas.toJSON());
+  if (stickerHistoryIndex < stickerHistory.length - 1) {
+    stickerHistory = stickerHistory.slice(0, stickerHistoryIndex + 1);
+  }
+  stickerHistory.push(json);
+  if (stickerHistory.length > 40) stickerHistory.shift();
+  stickerHistoryIndex = stickerHistory.length - 1;
+  updateUndoRedoButtons();
+}
+
+function stickerUndo() {
+  if (!stickerCanvas || stickerHistoryIndex <= 0) return;
+  stickerHistoryIndex--;
+  stickerCanvas.loadFromJSON(stickerHistory[stickerHistoryIndex], function () {
+    stickerCanvas.renderAll();
+    updateUndoRedoButtons();
+    updateLayerPanel();
   });
+}
+
+function stickerRedo() {
+  if (!stickerCanvas || stickerHistoryIndex >= stickerHistory.length - 1) return;
+  stickerHistoryIndex++;
+  stickerCanvas.loadFromJSON(stickerHistory[stickerHistoryIndex], function () {
+    stickerCanvas.renderAll();
+    updateUndoRedoButtons();
+    updateLayerPanel();
+  });
+}
+
+function updateUndoRedoButtons() {
+  var undoBtn = document.getElementById('btn-undo');
+  var redoBtn = document.getElementById('btn-redo');
+  if (undoBtn) undoBtn.disabled = stickerHistoryIndex <= 0;
+  if (redoBtn) redoBtn.disabled = stickerHistoryIndex >= stickerHistory.length - 1;
+}
+
+function updateLayerPanel() {
+  if (!stickerCanvas) return;
+  var list = document.getElementById('sticker-layer-list');
+  if (!list) return;
+  var objects = stickerCanvas.getObjects();
+  if (objects.length === 0) {
+    list.innerHTML = '<p class="text-xs text-gray-400 text-center py-2">No layers yet</p>';
+    return;
+  }
+  var html = '';
+  for (var i = objects.length - 1; i >= 0; i--) {
+    var obj = objects[i];
+    var label = obj.type === 'i-text' || obj.type === 'text' ? obj.text.substring(0, 18) : (obj.type || 'Object');
+    var active = stickerCanvas.getActiveObject() === obj;
+    html += '<button onclick="selectLayer(' + i + ')" class="w-full text-left px-2 py-1.5 rounded text-[11px] ' + (active ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:bg-gray-50') + ' truncate">' + label + '</button>';
+  }
+  list.innerHTML = html;
+}
+
+function selectLayer(index) {
+  if (!stickerCanvas) return;
+  var objects = stickerCanvas.getObjects();
+  if (objects[index]) {
+    stickerCanvas.setActiveObject(objects[index]);
+    stickerCanvas.renderAll();
+    updateLayerPanel();
+  }
+}
+
+function toggleLayerPanel() {
+  var panel = document.getElementById('sticker-layer-panel');
+  if (panel) panel.classList.toggle('hidden');
 }
 
 function addStickerText() {
   if (!stickerCanvas) return;
-  var text = new fabric.Text('My Scent', {
-    left: 60,
-    top: 130,
+  var text = new fabric.IText('My Scent', {
+    left: 80,
+    top: 150,
     fontFamily: 'Georgia, serif',
-    fontSize: 22,
+    fontSize: 26,
     fill: '#C9A96E',
     editable: true,
-    selection: true,
   });
   stickerCanvas.add(text);
   stickerCanvas.setActiveObject(text);
@@ -50,200 +119,201 @@ function addStickerText() {
 
 function setStickerColor(color) {
   var obj = stickerCanvas.getActiveObject();
-  if (obj) {
+  if (obj && obj.type !== 'activeSelection') {
     obj.set('fill', color);
     stickerCanvas.renderAll();
   }
-  document.querySelectorAll('.color-swatch').forEach(function (el) {
-    el.classList.toggle('active', el.dataset.color === color);
-  });
+  var preview = document.getElementById('color-preview');
+  if (preview) preview.style.background = color;
 }
 
-function addStar() {
+function showColorPicker() {
+  var panel = document.getElementById('sticker-tools');
+  if (!panel) return;
+  var existing = document.getElementById('color-picker-panel');
+  if (existing) { existing.remove(); return; }
+
+  var picker = document.createElement('div');
+  picker.id = 'color-picker-panel';
+  picker.className = 'px-5 pb-4';
+  picker.innerHTML =
+    '<div class="flex flex-wrap gap-2 mb-3">' +
+    STICKER_COLORS.map(function (c) {
+      return '<button onclick="setStickerColor(\'' + c + '\')" class="w-8 h-8 rounded-full border border-gray-200 hover:scale-110 transition-transform" style="background:' + c + ';"></button>';
+    }).join('') +
+    '</div>' +
+    '<div class="flex gap-2">' +
+      '<input type="color" id="custom-color" value="#C9A96E" class="w-8 h-8 rounded cursor-pointer border-0 p-0">' +
+      '<button onclick="setStickerColor(document.getElementById(\'custom-color\').value)" class="text-xs text-gray-600 border border-gray-200 rounded-full px-3 py-1 hover:bg-gray-50">Apply</button>' +
+    '</div>';
+  panel.appendChild(picker);
+}
+
+function showElementsPicker() {
+  var panel = document.getElementById('sticker-tools');
+  if (!panel) return;
+  var existing = document.getElementById('elements-picker-panel');
+  if (existing) { existing.remove(); return; }
+
+  var picker = document.createElement('div');
+  picker.id = 'elements-picker-panel';
+  picker.className = 'px-5 pb-4';
+  picker.innerHTML =
+    '<div class="grid grid-cols-4 gap-2">' +
+      '<button onclick="addShape(\'rect\')" class="flex flex-col items-center gap-1 p-2 rounded-lg border border-gray-100 hover:bg-gray-50"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="4" y="6" width="16" height="12" rx="1" stroke="#1a1a1a" stroke-width="1.3"/></svg><span class="text-[10px] text-gray-500">Rect</span></button>' +
+      '<button onclick="addShape(\'circle\')" class="flex flex-col items-center gap-1 p-2 rounded-lg border border-gray-100 hover:bg-gray-50"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="#1a1a1a" stroke-width="1.3"/></svg><span class="text-[10px] text-gray-500">Circle</span></button>' +
+      '<button onclick="addShape(\'triangle\')" class="flex flex-col items-center gap-1 p-2 rounded-lg border border-gray-100 hover:bg-gray-50"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><polygon points="12,4 20,20 4,20" stroke="#1a1a1a" stroke-width="1.3" fill="none"/></svg><span class="text-[10px] text-gray-500">Triangle</span></button>' +
+      '<button onclick="addShape(\'star\')" class="flex flex-col items-center gap-1 p-2 rounded-lg border border-gray-100 hover:bg-gray-50"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><polygon points="12,2 15,9 22,9 16.5,14 18.5,21 12,17 5.5,21 7.5,14 2,9 9,9" stroke="#1a1a1a" stroke-width="1.3" fill="none"/></svg><span class="text-[10px] text-gray-500">Star</span></button>' +
+      '<button onclick="addShape(\'line-h\')" class="flex flex-col items-center gap-1 p-2 rounded-lg border border-gray-100 hover:bg-gray-50"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><line x1="4" y1="12" x2="20" y2="12" stroke="#1a1a1a" stroke-width="1.3"/></svg><span class="text-[10px] text-gray-500">Line</span></button>' +
+      '<button onclick="addShape(\'heart\')" class="flex flex-col items-center gap-1 p-2 rounded-lg border border-gray-100 hover:bg-gray-50"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 21C12 21 3 14 3 8.5C3 5.42 5.42 3 8.5 3C10.24 3 11.91 3.81 12 5C12.09 3.81 13.76 3 15.5 3C18.58 3 21 5.42 21 8.5C21 14 12 21 12 21Z" stroke="#1a1a1a" stroke-width="1.3" fill="none"/></svg><span class="text-[10px] text-gray-500">Heart</span></button>' +
+      '<button onclick="addShape(\'drop\')" class="flex flex-col items-center gap-1 p-2 rounded-lg border border-gray-100 hover:bg-gray-50"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2C12 2 5 11 5 15C5 19 8.13 22 12 22C15.87 22 19 19 19 15C19 11 12 2 12 2Z" stroke="#1a1a1a" stroke-width="1.3" fill="none"/></svg><span class="text-[10px] text-gray-500">Drop</span></button>' +
+      '<button onclick="addShape(\'diamond\')" class="flex flex-col items-center gap-1 p-2 rounded-lg border border-gray-100 hover:bg-gray-50"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><polygon points="12,2 22,12 12,22 2,12" stroke="#1a1a1a" stroke-width="1.3" fill="none"/></svg><span class="text-[10px] text-gray-500">Diamond</span></button>' +
+    '</div>';
+  panel.appendChild(picker);
+}
+
+function showBorderPicker() {
+  var panel = document.getElementById('sticker-tools');
+  if (!panel) return;
+  var existing = document.getElementById('border-picker-panel');
+  if (existing) { existing.remove(); return; }
+
+  var picker = document.createElement('div');
+  picker.id = 'border-picker-panel';
+  picker.className = 'px-5 pb-4';
+  picker.innerHTML =
+    '<div class="grid grid-cols-3 gap-2">' +
+      '<button onclick="addBorder(\'none\')" class="p-3 rounded-lg border border-gray-100 hover:bg-gray-50 text-center"><span class="text-[10px] text-gray-500">None</span></button>' +
+      '<button onclick="addBorder(\'solid\')" class="p-3 rounded-lg border border-gray-100 hover:bg-gray-50 text-center"><div class="w-full h-5 border-2 border-gray-900 rounded"></div></button>' +
+      '<button onclick="addBorder(\'dashed\')" class="p-3 rounded-lg border border-gray-100 hover:bg-gray-50 text-center"><div class="w-full h-5 border-2 border-dashed border-gray-900 rounded"></div></button>' +
+      '<button onclick="addBorder(\'double\')" class="p-3 rounded-lg border border-gray-100 hover:bg-gray-50 text-center"><div class="w-full h-5 border-4 border-double border-gray-900 rounded"></div></button>' +
+      '<button onclick="addBorder(\'rounded\')" class="p-3 rounded-lg border border-gray-100 hover:bg-gray-50 text-center"><div class="w-full h-5 border-2 border-gray-900 rounded-full"></div></button>' +
+      '<button onclick="addBorder(\'dotted\')" class="p-3 rounded-lg border border-gray-100 hover:bg-gray-50 text-center"><div class="w-full h-5 border-2 border-dotted border-gray-900 rounded"></div></button>' +
+    '</div>';
+  panel.appendChild(picker);
+}
+
+function addBorder(type) {
   if (!stickerCanvas) return;
-  var points = [];
-  var spikes = 5;
-  var outerR = 18;
-  var innerR = 8;
-  for (var i = 0; i < spikes * 2; i++) {
-    var r = i % 2 === 0 ? outerR : innerR;
-    var angle = (Math.PI / spikes) * i - Math.PI / 2;
-    points.push({ x: r * Math.cos(angle), y: r * Math.sin(angle) });
+  // remove existing border rect
+  stickerCanvas.getObjects().forEach(function (o) {
+    if (o._isBorder) stickerCanvas.remove(o);
+  });
+  if (type === 'none') { stickerCanvas.renderAll(); return; }
+
+  var w = 340, h = 340, x = 5, y = 5;
+  var opts = { left: x, top: y, width: w, height: h, fill: 'transparent', selectable: false, evented: false, _isBorder: true, rx: type === 'rounded' ? 15 : 5, ry: type === 'rounded' ? 15 : 5 };
+
+  if (type === 'solid' || type === 'rounded' || type === 'double' || type === 'dotted') {
+    opts.stroke = '#1a1a1a';
+    opts.strokeWidth = 2;
   }
-  var star = new fabric.Polygon(points, {
-    left: 100,
-    top: 140,
-    fill: '#C9A96E',
-    selection: true,
-  });
-  stickerCanvas.add(star);
-  stickerCanvas.setActiveObject(star);
+  if (type === 'dashed') {
+    opts.stroke = '#1a1a1a';
+    opts.strokeWidth = 2;
+    opts.strokeDashArray = [8, 4];
+  }
+  if (type === 'dotted') {
+    opts.strokeDashArray = [3, 3];
+  }
+
+  stickerCanvas.add(new fabric.Rect(opts));
   stickerCanvas.renderAll();
+  saveStickerState();
 }
 
-function addWave() {
+function addShape(type) {
   if (!stickerCanvas) return;
-  var path = 'M 0 10 Q 15 0 30 10 Q 45 20 60 10 Q 75 0 90 10';
-  var wave = new fabric.Path(path, {
-    left: 75,
-    top: 160,
-    fill: '',
-    stroke: '#C9A96E',
-    strokeWidth: 2,
-    selection: true,
-  });
-  stickerCanvas.add(wave);
-  stickerCanvas.setActiveObject(wave);
-  stickerCanvas.renderAll();
+  var obj;
+  var opts = { left: 120, top: 130, fill: '#C9A96E', selectable: true, originX: 'center', originY: 'center' };
+  var cx = 175, cy = 175;
+
+  switch (type) {
+    case 'rect': obj = new fabric.Rect(Object.assign({ width: 60, height: 40, rx: 4 }, opts)); break;
+    case 'circle': obj = new fabric.Circle(Object.assign({ radius: 30 }, opts)); break;
+    case 'triangle': obj = new fabric.Triangle(Object.assign({ width: 60, height: 52 }, opts)); break;
+    case 'star':
+      var pts = [], spikes = 5, oR = 28, iR = 12;
+      for (var i = 0; i < spikes * 2; i++) {
+        var r = i % 2 === 0 ? oR : iR;
+        var a = (Math.PI / spikes) * i - Math.PI / 2;
+        pts.push({ x: r * Math.cos(a), y: r * Math.sin(a) });
+      }
+      obj = new fabric.Polygon(pts, opts); break;
+    case 'line-h': obj = new fabric.Line([cx - 40, cy, cx + 40, cy], Object.assign({ stroke: '#C9A96E', strokeWidth: 2 }, { left: cx - 40, top: cy })); break;
+    case 'heart': obj = new fabric.Path('M0 -10 C0 -20 -15 -25 -15 -12 C-15 0 0 15 0 20 C0 15 15 0 15 -12 C15 -25 0 -20 0 -10 Z', Object.assign({ scaleX: 2, scaleY: 2 }, opts)); break;
+    case 'drop': obj = new fabric.Path('M0 -25 C-15 -5 -15 10 0 18 C15 10 15 -5 0 -25 Z', Object.assign({ scaleX: 1.5, scaleY: 1.5 }, opts)); break;
+    case 'diamond': obj = new fabric.Polygon([{x:0,y:-28},{x:22,y:0},{x:0,y:28},{x:-22,y:0}], opts); break;
+  }
+
+  if (obj) {
+    stickerCanvas.add(obj);
+    stickerCanvas.setActiveObject(obj);
+    stickerCanvas.renderAll();
+  }
 }
 
-function addLine() {
+function uploadStickerImage() {
   if (!stickerCanvas) return;
-  var line = new fabric.Line([40, 0, 200, 0], {
-    left: 20,
-    top: 170,
-    stroke: '#C9A96E',
-    strokeWidth: 1.5,
-    selection: true,
-  });
-  stickerCanvas.add(line);
-  stickerCanvas.setActiveObject(line);
-  stickerCanvas.renderAll();
-}
-
-function addBlob() {
-  if (!stickerCanvas) return;
-  var blob = new fabric.Path(
-    'M 30 10 C 50 -5 75 5 80 25 C 85 45 70 65 45 60 C 20 55 5 40 10 25 C 15 10 10 25 30 10 Z',
-    {
-      left: 80,
-      top: 120,
-      fill: 'rgba(201,169,110,0.25)',
-      stroke: '#C9A96E',
-      strokeWidth: 1,
-      selection: true,
-    }
-  );
-  stickerCanvas.add(blob);
-  stickerCanvas.setActiveObject(blob);
-  stickerCanvas.renderAll();
+  var input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.onchange = function (e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function (ev) {
+      fabric.Image.fromURL(ev.target.result, function (img) {
+        var scale = Math.min(200 / img.width, 200 / img.height);
+        img.set({ left: 175, top: 175, originX: 'center', originY: 'center', scaleX: scale, scaleY: scale });
+        stickerCanvas.add(img);
+        stickerCanvas.setActiveObject(img);
+        stickerCanvas.renderAll();
+      });
+    };
+    reader.readAsDataURL(file);
+  };
+  input.click();
 }
 
 function clearSticker() {
   if (!stickerCanvas) return;
   stickerCanvas.clear();
-  stickerCanvas.backgroundColor = 'rgba(245,240,232,0.05)';
+  stickerCanvas.backgroundColor = '#FFFFFF';
   stickerCanvas.renderAll();
-  document.getElementById('btn-continue-summary').classList.add('hidden');
+  saveStickerState();
 }
 
 function saveStickerDesign() {
   if (!stickerCanvas) return;
-
   var json = stickerCanvas.toJSON();
   var dataUrl = stickerCanvas.toDataURL({ format: 'png', multiplier: 2 });
-
   window.perfumeState.stickerDesign = json;
   window.perfumeState.stickerThumb = dataUrl;
-
-  document.getElementById('btn-continue-summary').classList.remove('hidden');
 }
 
-function renderStickerStudio() {
-  var container = document.getElementById('sticker-layout');
-  if (!container) return;
-
-  var colorSwatches = STICKER_COLORS.map(function (c) {
-    return '<div class="color-swatch" data-color="' + c + '" style="background:' + c + ';" onclick="setStickerColor(\'' + c + '\')"></div>';
-  }).join('');
-
-  container.innerHTML =
-    '<div class="flex flex-col lg:flex-row gap-8 items-start">' +
-
-      /* Sidebar */
-      '<div class="lg:w-64 w-full flex-shrink-0 sticker-sidebar space-y-6">' +
-
-        /* Text tool */
-        '<div>' +
-          '<h4 class="text-gold tracking-[0.15em] uppercase text-xs mb-3">Text</h4>' +
-          '<button onclick="addStickerText()" class="w-full border border-cream/20 text-cream/70 rounded-lg px-4 py-2.5 text-sm hover:border-gold hover:text-gold transition-colors">' +
-            '+ Add Text' +
-          '</button>' +
-        '</div>' +
-
-        /* Color picker */
-        '<div>' +
-          '<h4 class="text-gold tracking-[0.15em] uppercase text-xs mb-3">Color</h4>' +
-          '<div class="flex flex-wrap gap-2">' + colorSwatches + '</div>' +
-        '</div>' +
-
-        /* Shapes */
-        '<div>' +
-          '<h4 class="text-gold tracking-[0.15em] uppercase text-xs mb-3">Shapes</h4>' +
-          '<div class="grid grid-cols-2 gap-2">' +
-            '<button onclick="addStar()" class="shape-btn border border-cream/20 rounded-lg px-3 py-2 text-cream/60 text-xs text-center">★ Star</button>' +
-            '<button onclick="addWave()" class="shape-btn border border-cream/20 rounded-lg px-3 py-2 text-cream/60 text-xs text-center">〰 Wave</button>' +
-            '<button onclick="addLine()" class="shape-btn border border-cream/20 rounded-lg px-3 py-2 text-cream/60 text-xs text-center">— Line</button>' +
-            '<button onclick="addBlob()" class="shape-btn border border-cream/20 rounded-lg px-3 py-2 text-cream/60 text-xs text-center">◉ Blob</button>' +
-          '</div>' +
-        '</div>' +
-
-        /* Actions */
-        '<div class="space-y-3 pt-2">' +
-          '<button onclick="clearSticker()" class="w-full border border-cream/20 text-cream/50 rounded-lg px-4 py-2.5 text-sm hover:border-red-400 hover:text-red-400 transition-colors">' +
-            'Clear Canvas' +
-          '</button>' +
-          '<button onclick="saveStickerDesign()" class="w-full bg-gold text-dark rounded-lg px-4 py-2.5 text-sm font-medium hover:bg-gold/90 transition-colors">' +
-            'Save Design' +
-          '</button>' +
-          '<div id="btn-continue-summary" class="hidden">' +
-            '<button onclick="showScreen(\'screen-pricing\')" class="w-full border border-gold text-gold rounded-lg px-4 py-2.5 text-sm hover:bg-gold hover:text-dark transition-colors">' +
-              'Continue to Summary' +
-            '</button>' +
-          '</div>' +
-        '</div>' +
-
-      '</div>' +
-
-      /* Canvas area with bottle backdrop */
-      '<div class="flex-1 flex flex-col items-center">' +
-        '<div class="sticker-canvas-wrap p-6 relative">' +
-          /* Bottle backdrop SVG */
-          '<svg class="absolute inset-0 w-full h-full pointer-events-none opacity-20" viewBox="0 0 240 320" fill="none" xmlns="http://www.w3.org/2000/svg">' +
-            '<rect x="88" y="8" width="64" height="32" rx="4" stroke="rgba(201,169,110,0.4)" stroke-width="1" fill="none"/>' +
-            '<path d="M98 40 L98 60 Q98 68 104 68 L136 68 Q142 68 142 60 L142 40" stroke="rgba(201,169,110,0.3)" stroke-width="1" fill="none"/>' +
-            '<path d="M98 68 Q60 68 60 95 L60 95" stroke="rgba(201,169,110,0.3)" stroke-width="1" fill="none"/>' +
-            '<path d="M142 68 Q180 68 180 95 L180 95" stroke="rgba(201,169,110,0.3)" stroke-width="1" fill="none"/>' +
-            '<rect x="60" y="95" width="120" height="190" rx="8" stroke="rgba(201,169,110,0.3)" stroke-width="1" fill="none"/>' +
-          '</svg>' +
-          /* Fabric.js canvas */
-          '<canvas id="sticker-fabric"></canvas>' +
-        '</div>' +
-        '<p class="text-cream/30 text-xs mt-4 tracking-wide">Drag, resize, and rotate elements on the label</p>' +
-      '</div>' +
-
-    '</div>';
+function previewSticker() {
+  if (!stickerCanvas) return;
+  saveStickerDesign();
+  showScreen('screen-pricing');
 }
 
 function setupStickerScreen() {
-  renderStickerStudio();
   setTimeout(function () {
     initStickerCanvas();
-  }, 50);
+  }, 100);
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+  var target = document.getElementById('screen-sticker');
+  if (!target) return;
+
   var observer = new MutationObserver(function () {
-    var screen = document.getElementById('screen-sticker');
-    if (screen && !screen.classList.contains('hidden')) {
+    if (target.style.display !== 'none' && target.style.display !== '') {
       if (!stickerCanvas || !stickerCanvas.lowerCanvasEl) {
         setupStickerScreen();
       }
     }
   });
-
-  var target = document.getElementById('screen-sticker');
-  if (target) {
-    observer.observe(target, { attributes: true, attributeFilter: ['class'] });
-  }
+  observer.observe(target, { attributes: true, attributeFilter: ['style'] });
 });

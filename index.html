@@ -240,10 +240,131 @@
   </div>
 
   <!-- Screen 5: Sticker Design Studio -->
- <div id="screen-sticker" class="screen flex flex-col items-center px-6 py-10" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;display:none;overflow-y:auto;overflow-x:hidden;background:#fff;flex-direction:column;align-items:center;padding:0 1.5rem 2.5rem;">
-    <p class="text-gold tracking-[0.3em] uppercase text-sm mb-4">Sticker Studio</p>
-    <h2 class="text-3xl md:text-4xl font-light tracking-wide mb-8">Design Your Label</h2>
-    <div id="sticker-layout" class="w-full max-w-5xl"></div>
+ <div id="screen-sticker" class="screen" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;display:none;overflow-y:auto;overflow-x:hidden;background:#fafafa;flex-direction:column;">
+    <!-- Header -->
+    <div class="relative z-10 flex items-center justify-between pt-3 px-4">
+      <button onclick="showScreen('screen-mixing')" class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-gray-400 transition-colors">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="text-center">
+        <span class="text-xl tracking-[0.15em] text-gray-900" style="font-family:'Playfair Display',serif;">velm<span style="font-size:0.7em;">🌿</span>ra</span>
+      </div>
+      <button class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-gray-400 transition-colors">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/><path d="M8 7V11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><circle cx="8" cy="5.5" r="0.7" fill="currentColor"/></svg>
+      </button>
+    </div>
+
+    <!-- Step indicator -->
+    <div class="relative z-10 text-center mt-2">
+      <span class="inline-block border border-gray-300 rounded-full px-4 py-1 text-[11px] tracking-[0.15em] text-gray-500 uppercase">Step 4 of 4</span>
+    </div>
+
+    <!-- Title -->
+    <div class="relative z-10 text-center mt-3 px-6">
+      <h2 class="text-2xl text-gray-900" style="font-family:'Playfair Display',serif;">Design Your Sticker</h2>
+      <p class="text-gray-400 text-xs mt-1">Create a label that reflects your unique scent</p>
+    </div>
+
+    <!-- Canvas area -->
+    <div class="relative z-10 mx-4 mt-4 bg-white rounded-2xl border border-gray-200 p-3 flex flex-col items-center flex-1" style="min-height:0;">
+      <!-- Size badge -->
+      <div class="text-[10px] tracking-[0.15em] text-gray-500 uppercase font-medium mb-2">1 x 1 INCH</div>
+
+      <!-- Canvas frame -->
+      <div id="sticker-canvas-wrapper" class="w-full flex-1 relative rounded-xl overflow-hidden" style="min-height:0;">
+        <canvas id="sticker-canvas" width="350" height="350" style="width:100%;height:100%;border:2px dashed #d1d5db;border-radius:12px;background:#fff;"></canvas>
+        <div id="sticker-layer-panel" class="hidden absolute right-2 top-2 bg-white rounded-xl shadow-lg border border-gray-200 p-3 w-48 z-30">
+          <div id="sticker-layer-list" class="flex flex-col gap-1"></div>
+        </div>
+      </div>
+
+      <!-- Canvas action buttons -->
+      <div class="flex gap-3 mt-3 mb-2">
+        <button id="btn-undo" onclick="stickerUndo()" class="w-11 h-11 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:border-gray-400 hover:text-gray-600 transition-colors disabled:opacity-30 disabled:hover:border-gray-200 disabled:hover:text-gray-400" disabled>
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M5 8H3L6.5 4.5L10 8H8C11.314 8 14 10.686 14 14C14 14.4 13.9 14.78 13.74 15.12C15.3 14.08 16.32 12.38 16.32 10.5C16.32 7.5 13.88 5 10.94 5H5V8Z" fill="currentColor"/></svg>
+        </button>
+        <button id="btn-redo" onclick="stickerRedo()" class="w-11 h-11 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:border-gray-400 hover:text-gray-600 transition-colors disabled:opacity-30 disabled:hover:border-gray-200 disabled:hover:text-gray-400" disabled>
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M15 8H17L13.5 4.5L10 8H12C8.686 8 6 10.686 6 14C6 14.4 6.1 14.78 6.26 15.12C4.7 14.08 3.68 12.38 3.68 10.5C3.68 7.5 6.12 5 9.06 5H15V8Z" fill="currentColor"/></svg>
+        </button>
+        <button id="btn-layers" onclick="toggleLayerPanel()" class="w-11 h-11 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:border-gray-400 hover:text-gray-600 transition-colors">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M10 5V3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M10 17V15" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M5 10H3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M17 10H15" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M6.46 6.46L5.05 5.05" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M14.95 14.95L13.54 13.54" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M13.54 6.46L14.95 5.05" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M5.05 14.95L6.46 13.54" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Bottom panel -->
+    <div class="relative z-10 bg-white rounded-t-3xl border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]" style="padding:8px 0 0;">
+      <div class="w-10 h-1 bg-gray-300 rounded-full mx-auto mb-3"></div>
+
+      <div id="sticker-tools" class="w-full">
+        <button onclick="uploadStickerImage()" class="flex items-center w-full px-5 py-3.5 gap-4 hover:bg-gray-50 transition-colors">
+          <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M3 13V15C3 16.1 3.9 17 5 17H15C16.1 17 17 16.1 17 15V13" stroke="#1a1a1a" stroke-width="1.3" stroke-linecap="round"/><path d="M10 3V12" stroke="#1a1a1a" stroke-width="1.3" stroke-linecap="round"/><path d="M7 6L10 3L13 6" stroke="#1a1a1a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="flex-1 text-left">
+            <p class="text-sm font-medium text-gray-900">Upload Image</p>
+            <p class="text-[11px] text-gray-400">Add your own image</p>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="#d1d5db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <button onclick="addStickerText()" class="flex items-center w-full px-5 py-3.5 gap-4 hover:bg-gray-50 transition-colors">
+          <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M6 5H14V7" stroke="#1a1a1a" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 5V17" stroke="#1a1a1a" stroke-width="1.3" stroke-linecap="round"/><path d="M7 17H13" stroke="#1a1a1a" stroke-width="1.3" stroke-linecap="round"/></svg>
+          </div>
+          <div class="flex-1 text-left">
+            <p class="text-sm font-medium text-gray-900">Add Text</p>
+            <p class="text-[11px] text-gray-400">Add and customize text</p>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="#d1d5db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <button onclick="showColorPicker()" class="flex items-center w-full px-5 py-3.5 gap-4 hover:bg-gray-50 transition-colors">
+          <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 2L3 17H17L10 2Z" stroke="#1a1a1a" stroke-width="1.3" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="flex-1 text-left">
+            <p class="text-sm font-medium text-gray-900">Canvas Color</p>
+            <p class="text-[11px] text-gray-400">Change background color</p>
+          </div>
+          <div id="color-preview" class="w-5 h-5 rounded-full border border-gray-200" style="background:#fff;"></div>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="#d1d5db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <button onclick="showElementsPicker()" class="flex items-center w-full px-5 py-3.5 gap-4 hover:bg-gray-50 transition-colors">
+          <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="5" height="5" rx="0.5" stroke="#1a1a1a" stroke-width="1.2"/><circle cx="14.5" cy="5.5" r="2.5" stroke="#1a1a1a" stroke-width="1.2"/><polygon points="4,12 6.5,14 4,16" stroke="#1a1a1a" stroke-width="1.2" fill="none" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="flex-1 text-left">
+            <p class="text-sm font-medium text-gray-900">Design Elements</p>
+            <p class="text-[11px] text-gray-400">Add shapes and icons</p>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="#d1d5db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <button onclick="showBorderPicker()" class="flex items-center w-full px-5 py-3.5 gap-4 hover:bg-gray-50 transition-colors">
+          <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="1.5" stroke="#1a1a1a" stroke-width="1.2" stroke-dasharray="2.5 2"/></svg>
+          </div>
+          <div class="flex-1 text-left">
+            <p class="text-sm font-medium text-gray-900">Borders</p>
+            <p class="text-[11px] text-gray-400">Add beautiful borders</p>
+          </div>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3L9 7L5 11" stroke="#d1d5db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Preview Sticker button -->
+    <div class="fixed bottom-0 left-0 right-0 z-50 px-4 pb-5" style="pointer-events:none; display:none;" id="sticker-preview-bar">
+      <button onclick="previewSticker()" class="w-full bg-gray-900 text-white rounded-full py-4 px-6 text-[12px] tracking-[0.12em] uppercase font-medium flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors" style="pointer-events:auto;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.2"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.2"/></svg>
+        Preview Sticker
+        <span class="ml-auto">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+      </button>
+    </div>
   </div>
 
   <!-- Screen 6: Summary & Checkout -->

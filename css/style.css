@@ -927,3 +927,17 @@
   animation: liquid-shimmer 6s ease-in-out infinite;
   animation-delay: -2s;
 }
+
+/* Sticker canvas */
+#sticker-canvas-wrapper {
+  min-height: 180px;
+}
+
+#screen-sticker .w-10 {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+#screen-sticker button:active {
+  transform: scale(0.97);
+}
