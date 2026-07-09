@@ -87,7 +87,10 @@ function resetMixing() {
   updateBeaker();
 }
 
+var ethanolPouring = false;
+
 function addEthanol() {
+  if (ethanolPouring) return;
   var mix = window.perfumeState.mix || {};
   var oilDrops = getTotalMl() - (mix.alcohol || 0);
   if (oilDrops === 0) {
@@ -99,11 +102,61 @@ function addEthanol() {
     alert('Bottle is full.');
     return;
   }
-  mix.alcohol = maxDrops - oilDrops;
-  window.perfumeState.mix = mix;
-  updateTotalDisplay();
-  updateBeaker();
-  alert('Ethanol added! Ready to bottle.');
+
+  ethanolPouring = true;
+  var startAlcohol = mix.alcohol || 0;
+  var targetAlcohol = maxDrops - oilDrops;
+  var need = targetAlcohol - startAlcohol;
+  var duration = 1600;
+  var startTime = performance.now();
+
+  var dropInterval = setInterval(spawnWaterDroplet, 90);
+
+  function step(now) {
+    var t = Math.min((now - startTime) / duration, 1);
+    mix.alcohol = Math.round(startAlcohol + need * t);
+    window.perfumeState.mix = mix;
+    updateTotalDisplay();
+    updateBeaker();
+    if (t < 1) {
+      requestAnimationFrame(step);
+    } else {
+      clearInterval(dropInterval);
+      mix.alcohol = targetAlcohol;
+      window.perfumeState.mix = mix;
+      updateTotalDisplay();
+      updateBeaker();
+      ethanolPouring = false;
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+function spawnWaterDroplet() {
+  var droplet = document.createElement('div');
+  droplet.className = 'oil-droplet';
+  droplet.style.background = 'linear-gradient(to bottom, rgba(210,236,247,0.95), rgba(160,210,235,0.9))';
+  droplet.style.boxShadow = '0 2px 6px rgba(120,180,220,0.5)';
+  document.body.appendChild(droplet);
+
+  var mixingScreen = document.getElementById('screen-mixing');
+  var screenRect = mixingScreen.getBoundingClientRect();
+  var startX = screenRect.left + screenRect.width / 2 - 8 + (Math.random() * 10 - 5);
+  var startY = screenRect.top + 80;
+  droplet.style.left = startX + 'px';
+  droplet.style.top = startY + 'px';
+
+  var beakerEl = mixingScreen.querySelector('img[alt="Beaker"]');
+  var endY;
+  if (beakerEl) {
+    var beakerRect = beakerEl.getBoundingClientRect();
+    endY = beakerRect.top + beakerRect.height * 0.62 - startY;
+  } else {
+    endY = window.innerHeight * 0.45;
+  }
+  droplet.style.setProperty('--drop-distance', endY + 'px');
+
+  setTimeout(function () { droplet.remove(); }, 500);
 }
 
 function hexToRgb(hex) {
