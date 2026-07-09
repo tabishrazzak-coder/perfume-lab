@@ -185,7 +185,6 @@ function addEthanol() {
       var mixBtn = document.getElementById('btn-mix');
       if (mixBtn) {
         mixBtn.style.display = 'flex';
-        mixBtn.classList.add('mix-btn-glow');
       }
     }
   }
