@@ -29,30 +29,76 @@ function updateTotalDisplay() {
 }
 
 function spawnDroplet(color) {
+  var mixingScreen = document.getElementById('screen-mixing');
+  if (!mixingScreen) return;
+  var screenRect = mixingScreen.getBoundingClientRect();
+  var beakerEl = mixingScreen.querySelector('img[alt="Beaker"]');
+
+  var cx = screenRect.left + screenRect.width / 2;
+  var startY = screenRect.top + 80;
+
+  var impactY;
+  var surfaceEl = document.getElementById('beaker-fill');
+  if (surfaceEl) {
+    var sr = surfaceEl.getBoundingClientRect();
+    if (sr.height > 0) impactY = sr.top;
+  }
+  if (impactY == null) {
+    if (beakerEl) {
+      var beakerRect = beakerEl.getBoundingClientRect();
+      impactY = beakerRect.top + beakerRect.height * 0.62;
+    } else {
+      impactY = startY + window.innerHeight * 0.4;
+    }
+  }
+  var dropDistance = impactY - startY;
+
+  var light = (typeof lightenColor === 'function') ? lightenColor(color, 0.4) : color;
+  var dark = (typeof darkenColor === 'function') ? darkenColor(color, 0.2) : color;
+
   var droplet = document.createElement('div');
   droplet.className = 'oil-droplet';
-  droplet.style.backgroundColor = color;
-  droplet.style.boxShadow = '0 2px 6px ' + color + '80';
+  droplet.style.left = (cx - 6) + 'px';
+  droplet.style.top = startY + 'px';
+  droplet.style.background = 'radial-gradient(circle at 35% 28%, ' + light + ', ' + color + ' 55%, ' + dark + ')';
+  droplet.style.boxShadow = 'inset -1px -2px 3px ' + dark + '99, 0 2px 5px ' + color + '66';
+  droplet.style.setProperty('--drop-distance', dropDistance + 'px');
   document.body.appendChild(droplet);
 
-  var mixingScreen = document.getElementById('screen-mixing');
-  var screenRect = mixingScreen.getBoundingClientRect();
-  var startX = screenRect.left + screenRect.width / 2 - 8;
-  var startY = screenRect.top + 80;
-  droplet.style.left = startX + 'px';
-  droplet.style.top = startY + 'px';
+  setTimeout(function () {
+    droplet.remove();
+    spawnOilImpact(cx, impactY, color, light, dark);
+  }, 430);
+}
 
-  var beakerEl = mixingScreen.querySelector('img[alt="Beaker"]');
-  var endY;
-  if (beakerEl) {
-    var beakerRect = beakerEl.getBoundingClientRect();
-    endY = beakerRect.top + beakerRect.height * 0.6 - startY;
-  } else {
-    endY = window.innerHeight * 0.45;
+function spawnOilImpact(x, y, color, light, dark) {
+  var layer = document.createElement('div');
+  layer.className = 'pour-layer';
+  document.body.appendChild(layer);
+
+  var ripple = document.createElement('div');
+  ripple.className = 'oil-ripple';
+  ripple.style.left = x + 'px';
+  ripple.style.top = y + 'px';
+  ripple.style.borderColor = color;
+  layer.appendChild(ripple);
+
+  var n = 2 + Math.floor(Math.random() * 2);
+  for (var i = 0; i < n; i++) {
+    var p = document.createElement('div');
+    p.className = 'oil-splash-particle';
+    var dir = (Math.random() < 0.5 ? -1 : 1);
+    var dx = dir * (5 + Math.random() * 11);
+    var dy = -(7 + Math.random() * 12);
+    p.style.left = x + 'px';
+    p.style.top = y + 'px';
+    p.style.background = 'radial-gradient(circle at 35% 30%, ' + light + ', ' + color + ')';
+    p.style.setProperty('--dx', dx + 'px');
+    p.style.setProperty('--dy', dy + 'px');
+    layer.appendChild(p);
   }
-  droplet.style.setProperty('--drop-distance', endY + 'px');
 
-  setTimeout(function() { droplet.remove(); }, 500);
+  setTimeout(function () { layer.remove(); }, 620);
 }
 
 function changeOil(oilId, delta) {
