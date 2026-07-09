@@ -59,7 +59,7 @@ function changeOil(oilId, delta) {
   var current = window.perfumeState.mix[oilId] || 0;
   var newVal = current + delta;
   if (newVal < 0) newVal = 0;
-  if (newVal > getCapacity()) newVal = getCapacity();
+  if (newVal > getCapacity() * 2) newVal = getCapacity() * 2;
   window.perfumeState.mix[oilId] = newVal;
 
   var el = document.querySelector('.oil-amount[data-oil="' + oilId + '"]');
@@ -179,7 +179,7 @@ function waveSVG(color, amp) {
 function setBeakerLevel(total, capacity, color, opacity) {
   var fill = document.getElementById('beaker-fill');
   if (!fill) return;
-  var fillRatio = Math.min(total / capacity, 1);
+  var fillRatio = Math.min(total / (capacity * 2), 1);
   var fillPct = fillRatio * 70;
 
   if (total === 0) {
