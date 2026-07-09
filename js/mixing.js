@@ -110,7 +110,8 @@ function addEthanol() {
   var duration = 1600;
   var startTime = performance.now();
 
-  var stream = createWaterStream();
+  var pour = createWaterPour();
+  var splashTimer = pour ? setInterval(function () { pour.splash(); }, 70) : null;
 
   function step(now) {
     var t = Math.min((now - startTime) / duration, 1);
@@ -118,6 +119,7 @@ function addEthanol() {
     window.perfumeState.mix = mix;
     updateTotalDisplay();
     updateBeaker();
+    if (pour) pour.follow();
     if (t < 1) {
       requestAnimationFrame(step);
     } else {
@@ -125,35 +127,95 @@ function addEthanol() {
       window.perfumeState.mix = mix;
       updateTotalDisplay();
       updateBeaker();
-      if (stream) stream.remove();
+      if (splashTimer) clearInterval(splashTimer);
+      if (pour) pour.stop();
       ethanolPouring = false;
     }
   }
   requestAnimationFrame(step);
 }
 
-function createWaterStream() {
+function createWaterPour() {
   var mixingScreen = document.getElementById('screen-mixing');
   if (!mixingScreen) return null;
   var screenRect = mixingScreen.getBoundingClientRect();
   var beakerEl = mixingScreen.querySelector('img[alt="Beaker"]');
 
+  var cx = screenRect.left + screenRect.width / 2;
   var startY = screenRect.top + 80;
-  var endY;
+  var beakerRect, impactY;
   if (beakerEl) {
-    var beakerRect = beakerEl.getBoundingClientRect();
-    endY = beakerRect.top + beakerRect.height * 0.62;
+    beakerRect = beakerEl.getBoundingClientRect();
+    impactY = beakerRect.top + beakerRect.height * 0.6;
   } else {
-    endY = startY + window.innerHeight * 0.45;
+    impactY = startY + window.innerHeight * 0.4;
   }
+
+  var layer = document.createElement('div');
+  layer.className = 'pour-layer';
+  document.body.appendChild(layer);
 
   var stream = document.createElement('div');
   stream.className = 'water-stream';
-  stream.style.left = (screenRect.left + screenRect.width / 2 - 2.5) + 'px';
+  stream.style.left = (cx - 4) + 'px';
   stream.style.top = startY + 'px';
-  stream.style.height = Math.max(endY - startY, 0) + 'px';
-  document.body.appendChild(stream);
-  return stream;
+  layer.appendChild(stream);
+
+  var highlight = document.createElement('div');
+  highlight.className = 'water-stream-shine';
+  highlight.style.left = (cx - 1.5) + 'px';
+  highlight.style.top = startY + 'px';
+  layer.appendChild(highlight);
+
+  function setHeight() {
+    var beakerNow = beakerEl ? beakerEl.getBoundingClientRect() : null;
+    var surfaceEl = document.getElementById('beaker-fill');
+    var surfY = impactY;
+    if (surfaceEl) {
+      var sr = surfaceEl.getBoundingClientRect();
+      if (sr.height > 0) surfY = sr.top;
+    }
+    if (beakerNow) surfY = Math.max(surfY, beakerNow.top + beakerNow.height * 0.35);
+    var h = Math.max(surfY - startY, 0);
+    stream.style.height = h + 'px';
+    highlight.style.height = h + 'px';
+    return { x: cx, y: startY + h };
+  }
+  var impact = setHeight();
+
+  return {
+    follow: function () { impact = setHeight(); },
+    splash: function () {
+      var ripple = document.createElement('div');
+      ripple.className = 'water-ripple';
+      ripple.style.left = impact.x + 'px';
+      ripple.style.top = impact.y + 'px';
+      layer.appendChild(ripple);
+      setTimeout(function () { ripple.remove(); }, 650);
+
+      var n = 2 + Math.floor(Math.random() * 2);
+      for (var i = 0; i < n; i++) {
+        var p = document.createElement('div');
+        p.className = 'splash-particle';
+        var dir = (Math.random() < 0.5 ? -1 : 1);
+        var dx = dir * (8 + Math.random() * 16);
+        var dy = -(10 + Math.random() * 16);
+        p.style.left = impact.x + 'px';
+        p.style.top = impact.y + 'px';
+        p.style.setProperty('--dx', dx + 'px');
+        p.style.setProperty('--dy', dy + 'px');
+        layer.appendChild(p);
+        (function (el) { setTimeout(function () { el.remove(); }, 520); })(p);
+      }
+    },
+    stop: function () {
+      stream.style.transition = 'opacity 0.25s ease, height 0.25s ease';
+      highlight.style.transition = 'opacity 0.25s ease';
+      stream.style.opacity = '0';
+      highlight.style.opacity = '0';
+      setTimeout(function () { layer.remove(); }, 700);
+    }
+  };
 }
 
 function hexToRgb(hex) {

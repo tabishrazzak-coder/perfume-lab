@@ -673,30 +673,93 @@
   animation: droplet-fall 450ms ease-in forwards;
 }
 
-.water-stream {
+.pour-layer {
   position: fixed;
-  width: 5px;
+  inset: 0;
   pointer-events: none;
   z-index: 100;
-  border-radius: 3px;
-  background: linear-gradient(to bottom,
-    rgba(210, 236, 247, 0.2) 0%,
-    rgba(190, 224, 240, 0.85) 20%,
-    rgba(160, 210, 235, 0.9) 100%);
-  box-shadow: 0 0 6px rgba(150, 200, 230, 0.5);
-  background-size: 100% 22px;
-  animation: water-flow 0.5s linear infinite, stream-in 0.25s ease-out;
+}
+
+.water-stream {
+  position: fixed;
+  width: 8px;
+  pointer-events: none;
+  border-radius: 50%;
+  background: linear-gradient(to right,
+    rgba(120, 175, 210, 0.15) 0%,
+    rgba(200, 230, 245, 0.55) 30%,
+    rgba(235, 248, 255, 0.85) 50%,
+    rgba(200, 230, 245, 0.55) 70%,
+    rgba(120, 175, 210, 0.15) 100%);
+  filter: blur(0.4px);
+  clip-path: polygon(30% 0, 70% 0, 62% 100%, 38% 100%);
   transform-origin: top center;
+  animation: stream-in 0.22s ease-out, stream-wobble 0.9s ease-in-out infinite;
+}
+
+.water-stream-shine {
+  position: fixed;
+  width: 3px;
+  pointer-events: none;
+  border-radius: 50%;
+  background: linear-gradient(to bottom,
+    rgba(255, 255, 255, 0.0) 0%,
+    rgba(255, 255, 255, 0.75) 25%,
+    rgba(255, 255, 255, 0.55) 100%);
+  clip-path: polygon(20% 0, 80% 0, 60% 100%, 40% 100%);
+  background-size: 100% 18px;
+  animation: water-flow 0.35s linear infinite, stream-in 0.22s ease-out;
 }
 
 @keyframes water-flow {
   from { background-position: 0 0; }
-  to { background-position: 0 22px; }
+  to { background-position: 0 18px; }
 }
 
 @keyframes stream-in {
   from { transform: scaleY(0); }
   to { transform: scaleY(1); }
+}
+
+@keyframes stream-wobble {
+  0%, 100% { transform: translateX(0) scaleX(1); }
+  50% { transform: translateX(0.5px) scaleX(1.08); }
+}
+
+.water-ripple {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  margin-top: -3px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(180, 220, 240, 0.8);
+  pointer-events: none;
+  animation: ripple-expand 0.6s ease-out forwards;
+}
+
+@keyframes ripple-expand {
+  0% { transform: scale(0.4) scaleY(0.4); opacity: 0.9; }
+  100% { transform: scale(4.5) scaleY(2); opacity: 0; }
+}
+
+.splash-particle {
+  position: fixed;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  margin-top: -2.5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffffff, rgba(170, 215, 238, 0.9));
+  box-shadow: 0 0 3px rgba(150, 200, 230, 0.5);
+  pointer-events: none;
+  animation: splash-arc 0.5s ease-out forwards;
+}
+
+@keyframes splash-arc {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  60% { transform: translate(var(--dx), var(--dy)) scale(0.9); opacity: 1; }
+  100% { transform: translate(calc(var(--dx) * 1.3), 6px) scale(0.5); opacity: 0; }
 }
 
 
