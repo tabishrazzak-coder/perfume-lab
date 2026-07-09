@@ -22,7 +22,7 @@ function getTotalMl() {
 }
 
 function updateTotalDisplay() {
-  var ml = getTotalMl() / 2;
+  var ml = getTotalMl();
   var cap = getCapacity();
   var el = document.getElementById('total-mix-ml');
   if (el) el.textContent = ml + '/' + cap + ' ml';
@@ -60,7 +60,7 @@ function changeOil(oilId, delta) {
   var current = window.perfumeState.mix[oilId] || 0;
   var newVal = current + delta;
   if (newVal < 0) newVal = 0;
-  var maxDrops = getCapacity() * 2;
+  var maxDrops = getCapacity();
   var otherTotal = getTotalMl() - current;
   if (otherTotal + newVal > maxDrops) newVal = maxDrops - otherTotal;
   if (newVal < 0) newVal = 0;
@@ -94,7 +94,7 @@ function addEthanol() {
     alert('Please add some perfume oils first.');
     return;
   }
-  var maxDrops = getCapacity() * 2;
+  var maxDrops = getCapacity();
   if (oilDrops >= maxDrops) {
     alert('Bottle is full.');
     return;
@@ -190,7 +190,7 @@ function waveSVG(color, amp) {
 function setBeakerLevel(total, capacity, color, opacity) {
   var fill = document.getElementById('beaker-fill');
   if (!fill) return;
-  var fillRatio = Math.min(total / (capacity * 2), 1);
+  var fillRatio = Math.min(total / capacity, 1);
   var fillPct = fillRatio * 70;
 
   if (total === 0) {
