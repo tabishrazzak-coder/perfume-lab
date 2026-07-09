@@ -191,7 +191,7 @@ function setBeakerLevel(total, capacity, color, opacity) {
   var fill = document.getElementById('beaker-fill');
   if (!fill) return;
   var fillRatio = Math.min(total / capacity, 1);
-  var fillPct = fillRatio * 35;
+  var fillPct = fillRatio * 22;
 
   if (total === 0) {
     fill.style.height = '0%';
