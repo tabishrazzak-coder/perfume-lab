@@ -1,5 +1,5 @@
 window.perfumeState = {
-  bottleSize: '30ml',
+  bottleSize: '100ml',
   bottleType: 'classic',
 };
 
