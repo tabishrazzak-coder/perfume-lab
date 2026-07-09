@@ -95,50 +95,7 @@ body {
   to { opacity: 1; }
 }
 
-/* Bottom Tab Bar */
-#bottom-tab-bar {
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-#bottom-tab-bar.hidden-bar {
-  transform: translateY(100%);
-  opacity: 0;
-  pointer-events: none;
-}
-
-.tab-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  padding: 6px 16px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #9ca3af;
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  transition: color 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.tab-btn:active {
-  transform: scale(0.92);
-  transition: transform 0.1s ease;
-}
-
-.tab-btn.active {
-  color: #1a1a1a;
-}
-
-.tab-btn svg {
-  transition: transform 0.2s ease;
-}
-
-.tab-btn.active svg {
-  transform: scale(1.1);
-}
+/* Bottom Tab Bar removed */
 
 /* Button tap feedback */
 button:active {

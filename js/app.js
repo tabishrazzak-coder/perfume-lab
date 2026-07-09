@@ -5,28 +5,17 @@ window.perfumeState = {
 
 var _currentScreen = null;
 var _screenHistory = [];
-var _tabScreens = ['screen-mixing', 'screen-sticker', 'screen-pricing'];
-var _noTabScreens = ['screen-loading', 'screen-welcome', 'screen-confirmation', 'screen-bottle'];
 
 function showScreen(screenId, opts) {
   opts = opts || {};
   var target = document.getElementById(screenId);
   if (!target) return;
 
-  var prev = _currentScreen ? document.getElementById(_currentScreen) : null;
   var isBack = opts.back || false;
   var skipAnim = opts.skipAnim || false;
-  var isTab = _tabScreens.indexOf(screenId) !== -1;
 
   // determine direction
-  var forward = true;
-  if (isBack) {
-    forward = false;
-  } else if (_currentScreen && _tabScreens.indexOf(_currentScreen) !== -1 && isTab) {
-    var fromIdx = _tabScreens.indexOf(_currentScreen);
-    var toIdx = _tabScreens.indexOf(screenId);
-    forward = toIdx >= fromIdx;
-  }
+  var forward = !isBack;
 
   // hide all screens
   document.querySelectorAll('.screen').forEach(function (el) {
@@ -35,10 +24,8 @@ function showScreen(screenId, opts) {
   });
 
   // show target
-  if (skipAnim) {
-    target.style.display = 'flex';
-  } else {
-    target.style.display = 'flex';
+  target.style.display = 'flex';
+  if (!skipAnim) {
     target.classList.add(forward ? 'screen-enter' : 'screen-enter-back');
   }
 
@@ -50,9 +37,6 @@ function showScreen(screenId, opts) {
     _screenHistory.push(screenId);
   }
   if (isBack) _screenHistory.pop();
-
-  // update tab bar
-  updateTabBar(screenId);
 
   // trigger mixing capacity update
   if (screenId === 'screen-mixing' && typeof updateMixingCapacity === 'function') {
@@ -69,29 +53,6 @@ function goBack() {
     showScreen('screen-loading', { skipAnim: true });
   }
 }
-
-function updateTabBar(screenId) {
-  var bar = document.getElementById('bottom-tab-bar');
-  if (!bar) return;
-
-  var showBar = _tabScreens.indexOf(screenId) !== -1;
-  if (showBar) {
-    bar.style.display = '';
-    bar.classList.remove('hidden-bar');
-  } else {
-    bar.classList.add('hidden-bar');
-    setTimeout(function () {
-      if (bar.classList.contains('hidden-bar')) bar.style.display = 'none';
-    }, 300);
-  }
-
-  // update active tab
-  document.querySelectorAll('.tab-btn').forEach(function (btn) {
-    btn.classList.toggle('active', btn.getAttribute('data-tab') === screenId);
-  });
-}
-
-
 
 
 function renderSummaryScreen() {
