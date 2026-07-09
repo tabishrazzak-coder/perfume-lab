@@ -110,7 +110,7 @@ function addEthanol() {
   var duration = 1600;
   var startTime = performance.now();
 
-  var dropInterval = setInterval(spawnWaterDroplet, 90);
+  var stream = createWaterStream();
 
   function step(now) {
     var t = Math.min((now - startTime) / duration, 1);
@@ -121,42 +121,39 @@ function addEthanol() {
     if (t < 1) {
       requestAnimationFrame(step);
     } else {
-      clearInterval(dropInterval);
       mix.alcohol = targetAlcohol;
       window.perfumeState.mix = mix;
       updateTotalDisplay();
       updateBeaker();
+      if (stream) stream.remove();
       ethanolPouring = false;
     }
   }
   requestAnimationFrame(step);
 }
 
-function spawnWaterDroplet() {
-  var droplet = document.createElement('div');
-  droplet.className = 'oil-droplet';
-  droplet.style.background = 'linear-gradient(to bottom, rgba(210,236,247,0.95), rgba(160,210,235,0.9))';
-  droplet.style.boxShadow = '0 2px 6px rgba(120,180,220,0.5)';
-  document.body.appendChild(droplet);
-
+function createWaterStream() {
   var mixingScreen = document.getElementById('screen-mixing');
+  if (!mixingScreen) return null;
   var screenRect = mixingScreen.getBoundingClientRect();
-  var startX = screenRect.left + screenRect.width / 2 - 8 + (Math.random() * 10 - 5);
-  var startY = screenRect.top + 80;
-  droplet.style.left = startX + 'px';
-  droplet.style.top = startY + 'px';
-
   var beakerEl = mixingScreen.querySelector('img[alt="Beaker"]');
+
+  var startY = screenRect.top + 80;
   var endY;
   if (beakerEl) {
     var beakerRect = beakerEl.getBoundingClientRect();
-    endY = beakerRect.top + beakerRect.height * 0.62 - startY;
+    endY = beakerRect.top + beakerRect.height * 0.62;
   } else {
-    endY = window.innerHeight * 0.45;
+    endY = startY + window.innerHeight * 0.45;
   }
-  droplet.style.setProperty('--drop-distance', endY + 'px');
 
-  setTimeout(function () { droplet.remove(); }, 500);
+  var stream = document.createElement('div');
+  stream.className = 'water-stream';
+  stream.style.left = (screenRect.left + screenRect.width / 2 - 2.5) + 'px';
+  stream.style.top = startY + 'px';
+  stream.style.height = Math.max(endY - startY, 0) + 'px';
+  document.body.appendChild(stream);
+  return stream;
 }
 
 function hexToRgb(hex) {

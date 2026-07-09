@@ -673,6 +673,32 @@
   animation: droplet-fall 450ms ease-in forwards;
 }
 
+.water-stream {
+  position: fixed;
+  width: 5px;
+  pointer-events: none;
+  z-index: 100;
+  border-radius: 3px;
+  background: linear-gradient(to bottom,
+    rgba(210, 236, 247, 0.2) 0%,
+    rgba(190, 224, 240, 0.85) 20%,
+    rgba(160, 210, 235, 0.9) 100%);
+  box-shadow: 0 0 6px rgba(150, 200, 230, 0.5);
+  background-size: 100% 22px;
+  animation: water-flow 0.5s linear infinite, stream-in 0.25s ease-out;
+  transform-origin: top center;
+}
+
+@keyframes water-flow {
+  from { background-position: 0 0; }
+  to { background-position: 0 22px; }
+}
+
+@keyframes stream-in {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+
 
 
 /* Beaker liquid wave animation */
