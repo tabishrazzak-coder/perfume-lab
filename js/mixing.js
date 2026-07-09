@@ -487,7 +487,12 @@ function mixLiquid() {
 
   mixingInProgress = true;
   var mixBtn = document.getElementById('btn-mix');
-  if (mixBtn) mixBtn.classList.remove('mix-btn-glow');
+  if (mixBtn) {
+    mixBtn.classList.remove('mix-btn-glow');
+    mixBtn.classList.add('mix-btn-active');
+    spawnButtonBurst(mixBtn);
+  }
+  playMixBeep();
 
   var fill = document.getElementById('beaker-fill');
   var ethanol = document.getElementById('ethanol-layer');
@@ -495,13 +500,18 @@ function mixLiquid() {
   var w2 = document.getElementById('wave-layer2');
 
   // rolling liquid: speed up the surface waves (container stays still)
-  if (w1) w1.style.animation = 'wave-drift 0.45s linear infinite';
-  if (w2) w2.style.animation = 'wave-drift 0.65s linear infinite';
+  if (w1) w1.style.animation = 'wave-drift 0.4s linear infinite';
+  if (w2) w2.style.animation = 'wave-drift 0.6s linear infinite';
+
+  // swirling vortex overlay inside the liquid
+  var swirl = document.createElement('div');
+  swirl.className = 'mix-swirl';
+  if (fill) fill.appendChild(swirl);
 
   // rising bubbles inside the liquid
   var bubbleTimer = setInterval(function () {
-    if (fill) spawnMixBubble(fill);
-  }, 110);
+    if (fill) { spawnMixBubble(fill); spawnMixBubble(fill); }
+  }, 90);
 
   // ethanol blends down into the oil
   if (ethanol) {
@@ -513,12 +523,54 @@ function mixLiquid() {
   setTimeout(function () {
     window.perfumeState.mixed = true;
     clearInterval(bubbleTimer);
+    if (swirl) {
+      swirl.style.transition = 'opacity 0.4s ease';
+      swirl.style.opacity = '0';
+      setTimeout(function () { swirl.remove(); }, 450);
+    }
     if (w1) w1.style.animation = 'wave-drift 3s linear infinite';
     if (w2) w2.style.animation = 'wave-drift 4.5s linear infinite';
-    if (mixBtn) mixBtn.style.display = 'none';
+    if (mixBtn) {
+      mixBtn.classList.remove('mix-btn-active');
+      mixBtn.style.display = 'none';
+    }
     updateBeaker();
     mixingInProgress = false;
-  }, 1400);
+  }, 1600);
+}
+
+function spawnButtonBurst(btn) {
+  var icon = btn.querySelector('.mix-btn-icon');
+  var target = icon || btn;
+  var burst = document.createElement('span');
+  burst.className = 'mix-burst';
+  target.appendChild(burst);
+  setTimeout(function () { burst.remove(); }, 650);
+}
+
+var _mixAudioCtx = null;
+function playMixBeep() {
+  try {
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    if (!_mixAudioCtx) _mixAudioCtx = new AC();
+    var ctx = _mixAudioCtx;
+    if (ctx.state === 'suspended') ctx.resume();
+
+    var now = ctx.currentTime;
+    var osc = ctx.createOscillator();
+    var gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(880, now);
+    osc.frequency.exponentialRampToValueAtTime(1320, now + 0.12);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.18, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.28);
+  } catch (e) { /* ignore audio errors */ }
 }
 
 function spawnMixBubble(fill) {

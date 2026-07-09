@@ -758,6 +758,64 @@
   100% { transform: translate(var(--drift), var(--rise)) scale(1); opacity: 0; }
 }
 
+/* Swirling vortex overlay during mixing */
+.mix-swirl {
+  position: absolute;
+  left: -25%;
+  right: -25%;
+  bottom: -25%;
+  top: -25%;
+  pointer-events: none;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg,
+    rgba(255, 255, 255, 0) 0deg,
+    rgba(255, 255, 255, 0.28) 40deg,
+    rgba(255, 255, 255, 0) 90deg,
+    rgba(255, 255, 255, 0) 180deg,
+    rgba(255, 255, 255, 0.22) 220deg,
+    rgba(255, 255, 255, 0) 270deg,
+    rgba(255, 255, 255, 0) 360deg);
+  mix-blend-mode: screen;
+  animation: swirl-spin 0.7s linear infinite;
+}
+
+@keyframes swirl-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Mix button click feedback */
+.mix-btn-active .mix-btn-icon {
+  transform: scale(0.9);
+  background: rgba(201, 169, 110, 0.25);
+  box-shadow: 0 0 16px 4px rgba(201, 169, 110, 0.55);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mix-btn-icon {
+  position: relative;
+  overflow: visible;
+}
+
+.mix-burst {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 32px;
+  height: 32px;
+  margin-left: -16px;
+  margin-top: -16px;
+  border-radius: 50%;
+  border: 2px solid rgba(201, 169, 110, 0.8);
+  pointer-events: none;
+  animation: mix-burst-expand 0.6s ease-out forwards;
+}
+
+@keyframes mix-burst-expand {
+  0% { transform: scale(0.4); opacity: 0.9; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+
 .pour-layer {
   position: fixed;
   inset: 0;
