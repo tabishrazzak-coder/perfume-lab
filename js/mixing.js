@@ -202,6 +202,13 @@ function setBeakerLevel(total, capacity, color, opacity) {
   fill.style.height = fillPct + '%';
   fill.style.opacity = '1';
 
+  // More rounded bottom at low fill levels (below ~3ml)
+  if (total <= 3) {
+    fill.style.borderRadius = '14px 14px 50% 50% / 14px 14px 100% 100%';
+  } else {
+    fill.style.borderRadius = '0 0 22px 22px';
+  }
+
   var light = lightenColor(color, 0.35);
   var dark = darkenColor(color, 0.25);
 
