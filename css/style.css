@@ -736,16 +736,26 @@
   50% { opacity: 1; }
 }
 
-/* Beaker mixing turbulence */
-.beaker-mixing {
-  animation: beaker-swirl 0.34s ease-in-out infinite;
+/* Rising bubbles during mixing (liquid moves, container stays still) */
+.mix-bubble {
+  position: absolute;
+  bottom: 4px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.35) 60%, rgba(255, 255, 255, 0.08));
+  box-shadow: 0 0 2px rgba(255, 255, 255, 0.6);
+  pointer-events: none;
+  opacity: 0;
+  animation-name: bubble-rise;
+  animation-timing-function: ease-in;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
 }
 
-@keyframes beaker-swirl {
-  0%, 100% { transform: translateX(0) skewX(0deg); }
-  20% { transform: translateX(-2.5px) skewX(-2.2deg); }
-  50% { transform: translateX(2.5px) skewX(2.2deg); }
-  80% { transform: translateX(-1.5px) skewX(-1.4deg); }
+@keyframes bubble-rise {
+  0% { transform: translate(0, 0) scale(0.5); opacity: 0; }
+  20% { opacity: 0.9; }
+  70% { opacity: 0.8; }
+  100% { transform: translate(var(--drift), var(--rise)) scale(1); opacity: 0; }
 }
 
 .pour-layer {

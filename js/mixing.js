@@ -494,9 +494,14 @@ function mixLiquid() {
   var w1 = document.getElementById('wave-layer1');
   var w2 = document.getElementById('wave-layer2');
 
-  if (fill) fill.classList.add('beaker-mixing');
-  if (w1) w1.style.animation = 'wave-drift 0.5s linear infinite';
-  if (w2) w2.style.animation = 'wave-drift 0.7s linear infinite';
+  // rolling liquid: speed up the surface waves (container stays still)
+  if (w1) w1.style.animation = 'wave-drift 0.45s linear infinite';
+  if (w2) w2.style.animation = 'wave-drift 0.65s linear infinite';
+
+  // rising bubbles inside the liquid
+  var bubbleTimer = setInterval(function () {
+    if (fill) spawnMixBubble(fill);
+  }, 110);
 
   // ethanol blends down into the oil
   if (ethanol) {
@@ -507,13 +512,29 @@ function mixLiquid() {
 
   setTimeout(function () {
     window.perfumeState.mixed = true;
-    if (fill) fill.classList.remove('beaker-mixing');
+    clearInterval(bubbleTimer);
     if (w1) w1.style.animation = 'wave-drift 3s linear infinite';
     if (w2) w2.style.animation = 'wave-drift 4.5s linear infinite';
     if (mixBtn) mixBtn.style.display = 'none';
     updateBeaker();
     mixingInProgress = false;
   }, 1400);
+}
+
+function spawnMixBubble(fill) {
+  var bubble = document.createElement('div');
+  bubble.className = 'mix-bubble';
+  var size = 3 + Math.random() * 6;
+  bubble.style.width = size + 'px';
+  bubble.style.height = size + 'px';
+  bubble.style.left = (12 + Math.random() * 72) + '%';
+  var rise = 40 + Math.random() * 55;
+  var drift = (Math.random() * 8 - 4);
+  bubble.style.setProperty('--rise', '-' + rise + 'px');
+  bubble.style.setProperty('--drift', drift + 'px');
+  bubble.style.animationDuration = (0.7 + Math.random() * 0.6) + 's';
+  fill.appendChild(bubble);
+  setTimeout(function () { bubble.remove(); }, 1400);
 }
 
 function addAlcohol() {
