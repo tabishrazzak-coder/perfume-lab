@@ -58,126 +58,6 @@
     </div>
   </div>
 
-  <!-- Screen: Select Bottle -->
-  <div id="screen-bottle-select" class="screen" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;display:none;overflow-y:auto;overflow-x:hidden;background:#fff;">
-    <!-- Top bar -->
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 16px 0;">
-      <button onclick="showScreen('screen-loading')" style="width:40px;height:40px;border-radius:50%;border:1px solid #e5e5e5;display:flex;align-items:center;justify-content:center;background:none;cursor:pointer;">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8L10 13" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <span style="font-size:20px;letter-spacing:0.15em;color:#1a1a1a;font-family:'Playfair Display',serif;">velm<span style="font-size:0.7em;">🌿</span>ra</span>
-      <button style="width:40px;height:40px;border-radius:50%;border:1px solid #e5e5e5;display:flex;align-items:center;justify-content:center;background:none;cursor:pointer;">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="#888" stroke-width="1.2"/><path d="M8 7V11" stroke="#888" stroke-width="1.2" stroke-linecap="round"/><circle cx="8" cy="5.5" r="0.7" fill="#888"/></svg>
-      </button>
-    </div>
-
-    <!-- Step -->
-    <div style="text-align:center;margin-top:16px;">
-      <span style="display:inline-block;border:1px solid #d1d5db;border-radius:9999px;padding:4px 16px;font-size:11px;letter-spacing:0.15em;color:#888;">STEP 1 OF 4</span>
-    </div>
-
-    <!-- Title -->
-    <div style="text-align:center;margin-top:16px;padding:0 24px;">
-      <h2 style="font-size:28px;color:#1a1a1a;font-family:'Playfair Display',serif;margin:0;">Choose Your Bottle</h2>
-      <p style="color:#aaa;font-size:13px;margin-top:8px;">Select a size and a bottle that suits your style</p>
-    </div>
-
-    <!-- Content -->
-    <div style="margin-top:24px;padding:0 20px 100px;">
-
-      <!-- Size Section -->
-      <div style="margin-bottom:28px;">
-        <p style="font-size:11px;letter-spacing:0.2em;color:#888;text-transform:uppercase;margin-bottom:12px;">1. SELECT SIZE</p>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
-          <div onclick="selectSize(this)" data-size="30ml" style="position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px 8px 14px;border-radius:12px;border:2px solid #1a1a1a;background:#fff;cursor:pointer;">
-            <div style="position:absolute;top:10px;right:10px;width:18px;height:18px;border-radius:50%;border:2px solid #1a1a1a;display:flex;align-items:center;justify-content:center;"><div class="size-dot" style="width:8px;height:8px;border-radius:50%;background:#1a1a1a;"></div></div>
-            <span style="font-size:34px;font-weight:300;color:#1a1a1a;font-family:'Playfair Display',serif;">30</span>
-            <div style="display:flex;align-items:center;gap:4px;margin-top:4px;"><div style="width:20px;height:1px;background:#d1d5db;"></div><span style="font-size:10px;letter-spacing:0.12em;color:#aaa;">ML</span><div style="width:20px;height:1px;background:#d1d5db;"></div></div>
-            <p style="font-size:11px;color:#aaa;margin-top:4px;">Sample size</p>
-          </div>
-          <div onclick="selectSize(this)" data-size="50ml" style="position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px 8px 14px;border-radius:12px;border:1.5px solid #e5e5e5;background:#fff;cursor:pointer;">
-            <div style="position:absolute;top:10px;right:10px;width:18px;height:18px;border-radius:50%;border:2px solid #d1d5db;display:flex;align-items:center;justify-content:center;"><div class="size-dot" style="width:8px;height:8px;border-radius:50%;background:#1a1a1a;display:none;"></div></div>
-            <span style="font-size:34px;font-weight:300;color:#1a1a1a;font-family:'Playfair Display',serif;">50</span>
-            <div style="display:flex;align-items:center;gap:4px;margin-top:4px;"><div style="width:20px;height:1px;background:#d1d5db;"></div><span style="font-size:10px;letter-spacing:0.12em;color:#aaa;">ML</span><div style="width:20px;height:1px;background:#d1d5db;"></div></div>
-            <p style="font-size:11px;color:#aaa;margin-top:4px;">Classic size</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Bottle Section -->
-      <div>
-        <p style="font-size:11px;letter-spacing:0.2em;color:#888;text-transform:uppercase;margin-bottom:12px;">2. CHOOSE YOUR BOTTLE</p>
-        <div style="display:flex;flex-direction:column;gap:10px;">
-
-          <div onclick="selectBottle(this)" data-bottle="classic" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;border:2px solid #1a1a1a;background:#fff;cursor:pointer;">
-            <div style="width:72px;height:72px;flex-shrink:0;background:#f5f5f5;border-radius:8px;display:flex;align-items:center;justify-content:center;">
-              <svg width="44" height="56" viewBox="0 0 44 56" fill="none"><rect x="10" y="16" width="24" height="34" rx="2" fill="rgba(200,210,220,0.2)" stroke="#999" stroke-width="1"/><rect x="15" y="8" width="14" height="10" rx="1.5" fill="#2a2a2a"/><rect x="17" y="3" width="10" height="7" rx="2" fill="#1a1a1a"/></svg>
-            </div>
-            <div style="flex:1;min-width:0;">
-              <div style="display:flex;align-items:center;justify-content:space-between;"><h4 style="font-size:12px;font-weight:600;letter-spacing:0.06em;color:#1a1a1a;text-transform:uppercase;margin:0;">CLASSIC RECTANGLE</h4><span style="font-size:13px;font-weight:600;color:#1a1a1a;">₹200</span></div>
-              <p style="font-size:11px;color:#aaa;margin-top:2px;">Clean. Timeless. Understated.</p>
-              <div style="display:flex;align-items:center;gap:8px;margin-top:6px;font-size:9px;color:#aaa;"><span>🧴 30 ML</span><span>|</span><span>🫙 Glass</span><span>|</span><span>💧 Spray</span></div>
-            </div>
-            <div style="width:18px;height:18px;border-radius:50%;border:2px solid #d1d5db;flex-shrink:0;display:flex;align-items:center;justify-content:center;"><div class="bottle-dot" style="width:8px;height:8px;border-radius:50%;background:#1a1a1a;"></div></div>
-          </div>
-
-          <div onclick="selectBottle(this)" data-bottle="cylinder" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;border:1.5px solid #e5e5e5;background:#fff;cursor:pointer;">
-            <div style="width:72px;height:72px;flex-shrink:0;background:#f5f5f5;border-radius:8px;display:flex;align-items:center;justify-content:center;">
-              <svg width="44" height="56" viewBox="0 0 44 56" fill="none"><rect x="10" y="14" width="24" height="36" rx="12" fill="rgba(200,210,220,0.2)" stroke="#999" stroke-width="1"/><rect x="15" y="6" width="14" height="10" rx="3" fill="#2a2a2a"/><rect x="17" y="2" width="10" height="6" rx="2" fill="#1a1a1a"/></svg>
-            </div>
-            <div style="flex:1;min-width:0;">
-              <div style="display:flex;align-items:center;justify-content:space-between;"><h4 style="font-size:12px;font-weight:600;letter-spacing:0.06em;color:#1a1a1a;text-transform:uppercase;margin:0;">CYLINDER</h4><span style="font-size:13px;font-weight:600;color:#1a1a1a;">₹250</span></div>
-              <p style="font-size:11px;color:#aaa;margin-top:2px;">Modern. Sleek. Versatile.</p>
-              <div style="display:flex;align-items:center;gap:8px;margin-top:6px;font-size:9px;color:#aaa;"><span>🧴 30 ML</span><span>|</span><span>🫙 Glass</span><span>|</span><span>💧 Spray</span></div>
-            </div>
-            <div style="width:18px;height:18px;border-radius:50%;border:2px solid #d1d5db;flex-shrink:0;display:flex;align-items:center;justify-content:center;"><div class="bottle-dot" style="width:8px;height:8px;border-radius:50%;background:#1a1a1a;display:none;"></div></div>
-          </div>
-
-          <div onclick="selectBottle(this)" data-bottle="rounded" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;border:1.5px solid #e5e5e5;background:#fff;cursor:pointer;">
-            <div style="width:72px;height:72px;flex-shrink:0;background:#f5f5f5;border-radius:8px;display:flex;align-items:center;justify-content:center;">
-              <svg width="44" height="56" viewBox="0 0 44 56" fill="none"><rect x="8" y="16" width="28" height="32" rx="10" fill="rgba(200,210,220,0.2)" stroke="#999" stroke-width="1"/><rect x="14" y="8" width="16" height="10" rx="4" fill="#2a2a2a"/><rect x="16" y="3" width="12" height="7" rx="3" fill="#1a1a1a"/></svg>
-            </div>
-            <div style="flex:1;min-width:0;">
-              <div style="display:flex;align-items:center;justify-content:space-between;"><h4 style="font-size:12px;font-weight:600;letter-spacing:0.06em;color:#1a1a1a;text-transform:uppercase;margin:0;">ROUNDED</h4><span style="font-size:13px;font-weight:600;color:#1a1a1a;">₹300</span></div>
-              <p style="font-size:11px;color:#aaa;margin-top:2px;">Soft curves. Elegant presence.</p>
-              <div style="display:flex;align-items:center;gap:8px;margin-top:6px;font-size:9px;color:#aaa;"><span>🧴 30 ML</span><span>|</span><span>🫙 Glass</span><span>|</span><span>💧 Spray</span></div>
-            </div>
-            <div style="width:18px;height:18px;border-radius:50%;border:2px solid #d1d5db;flex-shrink:0;display:flex;align-items:center;justify-content:center;"><div class="bottle-dot" style="width:8px;height:8px;border-radius:50%;background:#1a1a1a;display:none;"></div></div>
-          </div>
-
-          <div onclick="selectBottle(this)" data-bottle="premium" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;border:1.5px solid #e5e5e5;background:#fff;cursor:pointer;">
-            <div style="width:72px;height:72px;flex-shrink:0;background:#f5f5f5;border-radius:8px;display:flex;align-items:center;justify-content:center;">
-              <svg width="44" height="56" viewBox="0 0 44 56" fill="none"><rect x="6" y="14" width="32" height="36" rx="2" fill="rgba(200,210,220,0.2)" stroke="#999" stroke-width="1"/><rect x="13" y="6" width="18" height="10" rx="1.5" fill="#2a2a2a"/><rect x="15" y="1" width="14" height="7" rx="2" fill="#1a1a1a"/></svg>
-            </div>
-            <div style="flex:1;min-width:0;">
-              <div style="display:flex;align-items:center;justify-content:space-between;"><h4 style="font-size:12px;font-weight:600;letter-spacing:0.06em;color:#1a1a1a;text-transform:uppercase;margin:0;">PREMIUM SQUARE</h4><span style="font-size:13px;font-weight:600;color:#1a1a1a;">₹400</span></div>
-              <p style="font-size:11px;color:#aaa;margin-top:2px;">Bold. Refined. Premium feel.</p>
-              <div style="display:flex;align-items:center;gap:8px;margin-top:6px;font-size:9px;color:#aaa;"><span>🧴 30 ML</span><span>|</span><span>🫙 Glass</span><span>|</span><span>💧 Spray</span></div>
-            </div>
-            <div style="width:18px;height:18px;border-radius:50%;border:2px solid #d1d5db;flex-shrink:0;display:flex;align-items:center;justify-content:center;"><div class="bottle-dot" style="width:8px;height:8px;border-radius:50%;background:#1a1a1a;display:none;"></div></div>
-          </div>
-
-          <div onclick="selectBottle(this)" data-bottle="luxe" style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;border:1.5px solid #e5e5e5;background:#fff;cursor:pointer;">
-            <div style="width:72px;height:72px;flex-shrink:0;background:#f5f5f5;border-radius:8px;display:flex;align-items:center;justify-content:center;">
-              <svg width="44" height="56" viewBox="0 0 44 56" fill="none"><rect x="4" y="12" width="36" height="38" rx="3" fill="rgba(200,210,220,0.2)" stroke="#999" stroke-width="1"/><rect x="12" y="4" width="20" height="10" rx="2" fill="#2a2a2a"/><rect x="14" y="0" width="16" height="6" rx="2" fill="#1a1a1a"/></svg>
-            </div>
-            <div style="flex:1;min-width:0;">
-              <div style="display:flex;align-items:center;justify-content:space-between;"><h4 style="font-size:12px;font-weight:600;letter-spacing:0.06em;color:#1a1a1a;text-transform:uppercase;margin:0;">LUXE COLLECTION</h4><span style="font-size:13px;font-weight:600;color:#1a1a1a;">₹500</span></div>
-              <p style="font-size:11px;color:#aaa;margin-top:2px;">Sophisticated. Luxurious. Iconic.</p>
-              <div style="display:flex;align-items:center;gap:8px;margin-top:6px;font-size:9px;color:#aaa;"><span>🧴 30 ML</span><span>|</span><span>🫙 Glass</span><span>|</span><span>💧 Spray</span></div>
-            </div>
-            <div style="width:18px;height:18px;border-radius:50%;border:2px solid #d1d5db;flex-shrink:0;display:flex;align-items:center;justify-content:center;"><div class="bottle-dot" style="width:8px;height:8px;border-radius:50%;background:#1a1a1a;display:none;"></div></div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
-    <!-- Continue button -->
-    <div style="position:absolute;bottom:0;left:0;right:0;z-index:20;padding:0 20px 24px;background:linear-gradient(transparent, #fff 30%);">
-      <button onclick="showScreen('screen-mixing'); updateMixingCapacity();" style="width:100%;background:#1a1a1a;color:#fff;border:none;border-radius:9999px;padding:16px;font-size:13px;letter-spacing:0.15em;text-transform:uppercase;font-weight:500;cursor:pointer;">CONTINUE →</button>
-    </div>
-  </div>
 
   <!-- Screen 1: Welcome -->
  <div id="screen-welcome" class="screen overflow-hidden" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;display:none;overflow-y:auto;overflow-x:hidden;background:#fff;">
@@ -188,7 +68,7 @@
  <div id="screen-mixing" class="screen" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;display:none;overflow-y:auto;overflow-x:hidden;background:#fff;flex-direction:column;overflow:clip;" style="background:#fff; height:100%; flex-direction:column; overflow:clip;">
     <!-- Header -->
     <div class="relative z-10 flex items-center justify-between pt-3 px-4">
-      <button onclick="showScreen('screen-size')" class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-gray-400 transition-colors">
+      <button onclick="showScreen('screen-loading')" class="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:border-gray-400 transition-colors">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div class="text-center">
@@ -201,7 +81,7 @@
 
     <!-- Step indicator -->
     <div class="relative z-10 text-center mt-2">
-      <span class="inline-block border border-gray-300 rounded-full px-4 py-1 text-[11px] tracking-[0.15em] text-gray-500 uppercase">Step 2 of 4</span>
+      <span class="inline-block border border-gray-300 rounded-full px-4 py-1 text-[11px] tracking-[0.15em] text-gray-500 uppercase">Step 1 of 3</span>
     </div>
 
     <!-- Title -->

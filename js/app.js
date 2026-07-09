@@ -256,6 +256,9 @@ function showLoading(targetScreenId, duration) {
       loading.classList.remove('screen-loading-out');
       loading.style.display = 'none';
       showScreen(targetScreenId);
+      if (targetScreenId === 'screen-mixing' && typeof updateMixingCapacity === 'function') {
+        updateMixingCapacity();
+      }
     }, 400);
   }, duration);
 }
@@ -267,5 +270,5 @@ document.addEventListener('DOMContentLoaded', function () {
   setVH();
   window.addEventListener('resize', setVH);
 
-  showLoading('screen-bottle-select', 2000);
+  showLoading('screen-mixing', 2000);
 });
