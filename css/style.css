@@ -642,21 +642,6 @@
   }
 }
 
-/* Mixing station - oil grid on desktop */
-@media (min-width: 768px) {
-  #oil-list {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    overflow-x: visible !important;
-    -webkit-overflow-scrolling: unset !important;
-  }
-
-  .oil-card {
-    min-width: 0 !important;
-  }
-}
-
 /* Droplet animation */
 @keyframes droplet-fall {
   0% {
