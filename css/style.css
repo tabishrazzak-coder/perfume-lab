@@ -1075,7 +1075,7 @@ button:active {
    Responsive Breakpoints
    ============================================= */
 
-/* Small phones (≤374px) */
+/* Small phones (≤374px) — iPhone SE, mini */
 @media (max-width: 374px) {
   #oil-list .oil-card { width: 75px; }
   .oil-card { padding: 8px 5px; }
@@ -1086,9 +1086,17 @@ button:active {
   #total-mix-ml { font-size: 20px !important; }
   #screen-mixing img[alt="Beaker"] { max-width: 60vw !important; max-height: 32vh !important; }
   #screen-mixing .oil-panel-header { display: none; }
+  #screen-sticker .text-2xl { font-size: 1.25rem !important; }
+  #screen-sticker .px-5 { padding-left: 1rem !important; padding-right: 1rem !important; }
+  #screen-sticker .py-3\.5 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+  #screen-sticker button { min-height: 44px; }
+  #screen-sticker .grid { grid-template-columns: repeat(3, 1fr) !important; }
+  #screen-sticker .text-sm { font-size: 0.8rem !important; }
+  #screen-sticker .text-\[11px\] { font-size: 9px !important; }
+  #screen-sticker .w-10 { width: 2rem !important; height: 2rem !important; }
 }
 
-/* Small phones (375-430px) - default target */
+/* Standard phones (375-430px) — default target */
 @media (min-width: 375px) and (max-width: 430px) {
   #oil-list .oil-card { width: clamp(85px, 21vw, 100px); }
   #screen-mixing img[alt="Beaker"] { max-width: 65vw !important; max-height: 36vh !important; }
@@ -1097,17 +1105,24 @@ button:active {
 /* Large phones / phablets (431-600px) */
 @media (min-width: 431px) and (max-width: 600px) {
   #oil-list .oil-card { width: 110px; }
+  #screen-mixing img[alt="Beaker"] { max-width: min(300px, 60%) !important; max-height: min(40vh, 300px) !important; }
+  #sticker-canvas-wrapper { max-width: 420px; }
+  #screen-sticker > div:nth-child(4) { height: 50vh; }
 }
 
-/* Tablets (601-900px) - grid oil layout */
+/* Tablets (601-900px) — grid oil layout, centered app */
 @media (min-width: 601px) and (max-width: 900px) {
   #oil-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; overflow-x: visible; cursor: default; padding: 0; }
   #oil-list .oil-card { width: auto; scroll-snap-align: none; }
   #oil-list:active { cursor: default; }
-  #sticker-canvas-wrapper { max-width: 400px; }
+  #sticker-canvas-wrapper { max-width: 440px; }
+  #screen-sticker > div:nth-child(4) { height: 52vh; }
+  #screen-mixing img[alt="Beaker"] { max-width: min(320px, 55%) !important; max-height: min(42vh, 320px) !important; }
+  #screen-pricing #pricing-content { max-width: 600px; }
+  #screen-confirmation #confirmation-content { max-width: 600px; }
 }
 
-/* Desktop (901px+) - centered app */
+/* Desktop (901px+) — centered phone container */
 @media (min-width: 901px) {
   #app { max-width: 480px; margin: 0 auto; border-left: 1px solid #eee; border-right: 1px solid #eee; }
   html, body { background: #f0f0f0 !important; }
