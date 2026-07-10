@@ -460,6 +460,14 @@ button:active {
   margin: 0 auto;
 }
 
+/* Beaker + ml counter group — centered vertically in flex section */
+.beaker-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto 0;
+}
+
 /* Total ML counter — always centered below beaker */
 #total-mix-ml {
   display: block;
