@@ -460,6 +460,13 @@ button:active {
   margin: 0 auto;
 }
 
+/* Total ML counter — always centered below beaker */
+#total-mix-ml {
+  display: block;
+  text-align: center;
+  line-height: 1.2;
+}
+
 .oil-card {
   background: #fff;
   border: 1px solid #e5e5e5;
@@ -1083,7 +1090,7 @@ button:active {
   .oil-card span[style*="font-size:22px"] { font-size: 16px !important; }
   .oil-btn { width: 20px; height: 20px; min-width: 20px; font-size: 11px; }
   .oil-amount { font-size: 12px !important; }
-  #total-mix-ml { font-size: 20px !important; }
+  #total-mix-ml { font-size: 18px !important; }
   #screen-mixing img[alt="Beaker"] { max-width: 60vw !important; max-height: 32vh !important; }
   #screen-mixing .oil-panel-header { display: none; }
   #screen-sticker .text-2xl { font-size: 1.25rem !important; }
@@ -1120,6 +1127,7 @@ button:active {
   #screen-mixing img[alt="Beaker"] { max-width: min(320px, 55%) !important; max-height: min(42vh, 320px) !important; }
   #screen-pricing #pricing-content { max-width: 600px; }
   #screen-confirmation #confirmation-content { max-width: 600px; }
+  #total-mix-ml { font-size: 28px; }
 }
 
 /* Desktop (901px+) — centered phone container */
