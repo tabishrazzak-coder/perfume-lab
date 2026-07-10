@@ -1090,6 +1090,14 @@ button:active {
    Responsive Breakpoints
    ============================================= */
 
+/* Short screens (≤715px height) — compact beaker + counter */
+@media (max-height: 715px) {
+  .beaker-group { margin-top: -2vh; }
+  .beaker-group .mt-2 { margin-top: 0.25rem !important; }
+  #screen-mixing img[alt="Beaker"] { max-height: min(32vh, 240px) !important; }
+  #total-mix-ml { font-size: 20px !important; }
+}
+
 /* Small phones (≤374px) — iPhone SE, mini */
 @media (max-width: 374px) {
   #oil-list .oil-card { width: 75px; }
