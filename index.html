@@ -87,7 +87,7 @@
 
     <!-- Step indicator -->
     <div class="relative z-10 text-center mt-2">
-      <span class="inline-block border border-gray-300 rounded-full px-4 py-1 text-[11px] tracking-[0.15em] text-gray-500 uppercase">Step 1 of 3</span>
+      <span class="inline-block border border-gray-300 rounded-full px-4 py-1 text-[11px] tracking-[0.15em] text-gray-500 uppercase">Step 1 of 2</span>
     </div>
 
     <!-- Title -->
@@ -262,7 +262,7 @@
 
     <!-- Step indicator -->
     <div class="relative z-10 text-center mt-2">
-      <span class="inline-block border border-gray-300 rounded-full px-4 py-1 text-[11px] tracking-[0.15em] text-gray-500 uppercase">Step 4 of 4</span>
+      <span class="inline-block border border-gray-300 rounded-full px-4 py-1 text-[11px] tracking-[0.15em] text-gray-500 uppercase">Step 2 of 2</span>
     </div>
 
     <!-- Title -->
@@ -277,7 +277,7 @@
       <div class="text-[10px] tracking-[0.15em] text-gray-500 uppercase font-medium mb-2">1 x 1 INCH</div>
 
       <!-- Canvas frame -->
-      <div id="sticker-canvas-wrapper" class="w-full flex-1 relative rounded-xl overflow-hidden" style="min-height:0;">
+      <div id="sticker-canvas-wrapper" class="w-full flex-1 relative rounded-xl overflow-hidden flex items-center justify-center" style="min-height:0;">
         <canvas id="sticker-canvas" width="350" height="350" style="width:100%; height:100%; border:2px dashed #d1d5db;border-radius:12px;background:#fff;"></canvas>
         <div id="sticker-layer-panel" class="hidden absolute right-2 top-2 bg-white rounded-xl shadow-lg border border-gray-200 p-3 w-48 z-30">
           <div id="sticker-layer-list" class="flex flex-col gap-1"></div>
@@ -362,8 +362,8 @@
     </div>
 
     <!-- Preview Sticker button -->
-    <div class="fixed left-0 right-0 z-50 px-4 pb-5" style="pointer-events:none; display:none;" id="sticker-preview-bar">
-      <button onclick="previewSticker()" class="w-full bg-gray-900 text-white rounded-full py-4 px-6 text-[12px] tracking-[0.12em] uppercase font-medium flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors" style="pointer-events:auto;">
+    <div class="relative z-10 px-4 pb-5 pt-2" id="sticker-preview-bar">
+      <button onclick="previewSticker()" class="w-full bg-gray-900 text-white rounded-full py-4 px-6 text-[12px] tracking-[0.12em] uppercase font-medium flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5" stroke="currentColor" stroke-width="1.2"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.2"/></svg>
         Preview Sticker
         <span class="ml-auto">

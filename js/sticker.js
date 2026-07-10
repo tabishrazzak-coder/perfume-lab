@@ -1,6 +1,7 @@
 var stickerCanvas = null;
 var stickerHistory = [];
 var stickerHistoryIndex = -1;
+var stickerIsRestoring = false;
 var STICKER_COLORS = [
   '#FFFFFF', '#F5F0E8', '#C9A96E', '#0A0A0A', '#E8A0BF', '#4A3728',
   '#B497D6', '#F4D35E', '#C68642', '#1A1A1A', '#D4E6D4', '#E6D4D4'
@@ -17,7 +18,7 @@ function getCanvasSize() {
 
 function initStickerCanvas(restoreJson) {
   if (stickerCanvas) {
-    if (!restoreJson) restoreJson = JSON.stringify(stickerCanvas.toJSON());
+    if (!restoreJson) restoreJson = JSON.stringify(stickerCanvas.toJSON(['_isBorder']));
     stickerCanvas.dispose();
   }
 
@@ -40,14 +41,18 @@ function initStickerCanvas(restoreJson) {
   stickerCanvas.on('selection:created', updateLayerPanel);
   stickerCanvas.on('selection:updated', updateLayerPanel);
   stickerCanvas.on('selection:cleared', updateLayerPanel);
-  stickerCanvas.on('object:modified', saveStickerState);
-  stickerCanvas.on('object:added', function () { saveStickerState(); updateUndoRedoButtons(); });
-  stickerCanvas.on('object:removed', function () { saveStickerState(); updateUndoRedoButtons(); });
+  stickerCanvas.on('object:modified', function () { if (!stickerIsRestoring) saveStickerState(); });
+  stickerCanvas.on('object:added', function () { if (!stickerIsRestoring) { saveStickerState(); updateUndoRedoButtons(); } });
+  stickerCanvas.on('object:removed', function () { if (!stickerIsRestoring) { saveStickerState(); updateUndoRedoButtons(); } });
+  stickerCanvas.on('text:changed', function () { if (!stickerIsRestoring) saveStickerState(); });
 
   if (restoreJson) {
+    stickerIsRestoring = true;
     stickerCanvas.loadFromJSON(restoreJson, function () {
+      stickerIsRestoring = false;
       stickerCanvas.renderAll();
-      saveStickerState();
+      updateLayerPanel();
+      updateUndoRedoButtons();
     });
   } else {
     saveStickerState();
@@ -56,7 +61,7 @@ function initStickerCanvas(restoreJson) {
 
 function saveStickerState() {
   if (!stickerCanvas) return;
-  var json = JSON.stringify(stickerCanvas.toJSON());
+  var json = JSON.stringify(stickerCanvas.toJSON(['_isBorder']));
   if (stickerHistoryIndex < stickerHistory.length - 1) {
     stickerHistory = stickerHistory.slice(0, stickerHistoryIndex + 1);
   }
@@ -69,7 +74,9 @@ function saveStickerState() {
 function stickerUndo() {
   if (!stickerCanvas || stickerHistoryIndex <= 0) return;
   stickerHistoryIndex--;
+  stickerIsRestoring = true;
   stickerCanvas.loadFromJSON(stickerHistory[stickerHistoryIndex], function () {
+    stickerIsRestoring = false;
     stickerCanvas.renderAll();
     updateUndoRedoButtons();
     updateLayerPanel();
@@ -79,7 +86,9 @@ function stickerUndo() {
 function stickerRedo() {
   if (!stickerCanvas || stickerHistoryIndex >= stickerHistory.length - 1) return;
   stickerHistoryIndex++;
+  stickerIsRestoring = true;
   stickerCanvas.loadFromJSON(stickerHistory[stickerHistoryIndex], function () {
+    stickerIsRestoring = false;
     stickerCanvas.renderAll();
     updateUndoRedoButtons();
     updateLayerPanel();
@@ -105,7 +114,7 @@ function updateLayerPanel() {
   var html = '';
   for (var i = objects.length - 1; i >= 0; i--) {
     var obj = objects[i];
-    var label = obj.type === 'i-text' || obj.type === 'text' ? obj.text.substring(0, 18) : (obj.type || 'Object');
+    var label = obj.type === 'i-text' || obj.type === 'text' ? obj.text.substring(0, 18) : (obj._isBorder ? 'Border' : (obj.type || 'Object'));
     var active = stickerCanvas.getActiveObject() === obj;
     html += '<button onclick="selectLayer(' + i + ')" class="w-full text-left px-2 py-1.5 rounded text-[11px] ' + (active ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:bg-gray-50') + ' truncate">' + label + '</button>';
   }
@@ -143,6 +152,7 @@ function addStickerText() {
 }
 
 function setStickerColor(color) {
+  if (!stickerCanvas) return;
   var obj = stickerCanvas.getActiveObject();
   if (obj && obj.type !== 'activeSelection') {
     obj.set('fill', color);
@@ -150,12 +160,23 @@ function setStickerColor(color) {
   }
   var preview = document.getElementById('color-preview');
   if (preview) preview.style.background = color;
+  saveStickerState();
+}
+
+function closeStickerPickers(exceptId) {
+  ['color-picker-panel', 'elements-picker-panel', 'border-picker-panel'].forEach(function (id) {
+    if (id !== exceptId) {
+      var el = document.getElementById(id);
+      if (el) el.remove();
+    }
+  });
 }
 
 function showColorPicker() {
   var panel = document.getElementById('sticker-tools');
   if (!panel) return;
   var existing = document.getElementById('color-picker-panel');
+  closeStickerPickers('color-picker-panel');
   if (existing) { existing.remove(); return; }
 
   var picker = document.createElement('div');
@@ -178,6 +199,7 @@ function showElementsPicker() {
   var panel = document.getElementById('sticker-tools');
   if (!panel) return;
   var existing = document.getElementById('elements-picker-panel');
+  closeStickerPickers('elements-picker-panel');
   if (existing) { existing.remove(); return; }
 
   var picker = document.createElement('div');
@@ -201,6 +223,7 @@ function showBorderPicker() {
   var panel = document.getElementById('sticker-tools');
   if (!panel) return;
   var existing = document.getElementById('border-picker-panel');
+  closeStickerPickers('border-picker-panel');
   if (existing) { existing.remove(); return; }
 
   var picker = document.createElement('div');
@@ -220,10 +243,12 @@ function showBorderPicker() {
 
 function addBorder(type) {
   if (!stickerCanvas) return;
+  stickerIsRestoring = true;
   stickerCanvas.getObjects().forEach(function (o) {
     if (o._isBorder) stickerCanvas.remove(o);
   });
-  if (type === 'none') { stickerCanvas.renderAll(); return; }
+  stickerIsRestoring = false;
+  if (type === 'none') { stickerCanvas.renderAll(); saveStickerState(); return; }
 
   var cw = stickerCanvas.width || 350;
   var ch = stickerCanvas.height || 350;
@@ -268,7 +293,7 @@ function addShape(type) {
         pts.push({ x: r * Math.cos(a), y: r * Math.sin(a) });
       }
       obj = new fabric.Polygon(pts, opts); break;
-    case 'line-h': obj = new fabric.Line([cx - 40, cy, cx + 40, cy], Object.assign({ stroke: '#C9A96E', strokeWidth: 2 }, { left: cx - 40, top: cy })); break;
+    case 'line-h': obj = new fabric.Line([-40, 0, 40, 0], Object.assign({ stroke: '#C9A96E', strokeWidth: 2 }, { left: cx, top: cy })); break;
     case 'heart': obj = new fabric.Path('M0 -10 C0 -20 -15 -25 -15 -12 C-15 0 0 15 0 20 C0 15 15 0 15 -12 C15 -25 0 -20 0 -10 Z', Object.assign({ scaleX: 2, scaleY: 2 }, opts)); break;
     case 'drop': obj = new fabric.Path('M0 -25 C-15 -5 -15 10 0 18 C15 10 15 -5 0 -25 Z', Object.assign({ scaleX: 1.5, scaleY: 1.5 }, opts)); break;
     case 'diamond': obj = new fabric.Polygon([{x:0,y:-28},{x:22,y:0},{x:0,y:28},{x:-22,y:0}], opts); break;
@@ -306,15 +331,17 @@ function uploadStickerImage() {
 
 function clearSticker() {
   if (!stickerCanvas) return;
+  stickerIsRestoring = true;
   stickerCanvas.clear();
   stickerCanvas.backgroundColor = '#FFFFFF';
+  stickerIsRestoring = false;
   stickerCanvas.renderAll();
   saveStickerState();
 }
 
 function saveStickerDesign() {
   if (!stickerCanvas) return;
-  var json = stickerCanvas.toJSON();
+  var json = stickerCanvas.toJSON(['_isBorder']);
   var dataUrl = stickerCanvas.toDataURL({ format: 'png', multiplier: 2 });
   window.perfumeState.stickerDesign = json;
   window.perfumeState.stickerThumb = dataUrl;
