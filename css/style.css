@@ -475,8 +475,8 @@ button:active {
   line-height: 1.2;
 }
 
-/* Tall screens (≥850px) — ensure counter stays centered */
-@media (min-height: 850px) {
+/* Tall screens (≥790px) — ensure counter stays centered */
+@media (min-height: 790px) {
   .beaker-group { width: 100%; }
   #total-mix-ml { text-align: center; }
 }
