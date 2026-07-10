@@ -1052,30 +1052,14 @@ button:active {
   margin: 0 auto;
 }
 
-/* Sticker bottom tools panel: scrollbar + constraint */
-#sticker-bottom-panel {
-  scrollbar-width: thin;
-  scrollbar-color: #d1d5db transparent;
-}
-
-#sticker-bottom-panel::-webkit-scrollbar { width: 3px; }
-#sticker-bottom-panel::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 2px; }
-
-/* Sticker screen: ensure canvas area always visible */
+/* Sticker screen: canvas area always visible */
 #screen-sticker > div:nth-child(4) {
   flex-shrink: 0;
-  min-height: 200px;
 }
 
 @media (max-width: 374px) {
-  #screen-sticker > div:nth-child(4) { min-height: 160px; }
   #sticker-canvas-wrapper { min-height: 140px; }
   #screen-sticker .w-11 { width: 2.2rem !important; height: 2.2rem !important; }
-}
-
-@media (min-width: 375px) and (max-width: 430px) {
-  #screen-sticker > div:nth-child(4) { min-height: 180px; }
-  #sticker-canvas-wrapper { min-height: 160px; }
 }
 
 #screen-sticker .w-10 {
