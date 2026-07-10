@@ -41,10 +41,9 @@ function initStickerCanvas(restoreJson) {
   stickerCanvas.on('selection:created', updateLayerPanel);
   stickerCanvas.on('selection:updated', updateLayerPanel);
   stickerCanvas.on('selection:cleared', updateLayerPanel);
-  stickerCanvas.on('object:modified', function () { if (!stickerIsRestoring) saveStickerState(); });
+  stickerCanvas.on('object:modified', function () { if (!stickerIsRestoring) saveStickerState(); updateLayerPanel(); });
   stickerCanvas.on('object:added', function () { if (!stickerIsRestoring) { saveStickerState(); updateUndoRedoButtons(); } });
   stickerCanvas.on('object:removed', function () { if (!stickerIsRestoring) { saveStickerState(); updateUndoRedoButtons(); } });
-  stickerCanvas.on('text:changed', function () { if (!stickerIsRestoring) saveStickerState(); });
 
   if (restoreJson) {
     stickerIsRestoring = true;
@@ -157,10 +156,10 @@ function setStickerColor(color) {
   if (obj && obj.type !== 'activeSelection') {
     obj.set('fill', color);
     stickerCanvas.renderAll();
+    saveStickerState();
   }
   var preview = document.getElementById('color-preview');
   if (preview) preview.style.background = color;
-  saveStickerState();
 }
 
 function closeStickerPickers(exceptId) {
@@ -247,8 +246,7 @@ function addBorder(type) {
   stickerCanvas.getObjects().forEach(function (o) {
     if (o._isBorder) stickerCanvas.remove(o);
   });
-  stickerIsRestoring = false;
-  if (type === 'none') { stickerCanvas.renderAll(); saveStickerState(); return; }
+  if (type === 'none') { stickerIsRestoring = false; stickerCanvas.renderAll(); saveStickerState(); return; }
 
   var cw = stickerCanvas.width || 350;
   var ch = stickerCanvas.height || 350;
@@ -271,6 +269,7 @@ function addBorder(type) {
   }
 
   stickerCanvas.add(new fabric.Rect(opts));
+  stickerIsRestoring = false;
   stickerCanvas.renderAll();
   saveStickerState();
 }
@@ -353,7 +352,20 @@ function previewSticker() {
   showScreen('screen-pricing');
 }
 
+function resetSticker() {
+  if (stickerCanvas) {
+    stickerCanvas.dispose();
+    stickerCanvas = null;
+  }
+  stickerHistory = [];
+  stickerHistoryIndex = -1;
+}
+
 function setupStickerScreen() {
+  if (!stickerCanvas) {
+    stickerHistory = [];
+    stickerHistoryIndex = -1;
+  }
   setTimeout(function () {
     initStickerCanvas();
   }, 100);

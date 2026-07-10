@@ -228,6 +228,7 @@ function renderConfirmation() {
 function resetAndStart() {
   window.perfumeState = { bottleSize: '100ml', bottleType: 'classic' };
   _screenHistory = [];
+  if (typeof resetSticker === 'function') resetSticker();
   showLoading('screen-mixing', 1500);
 }
 
