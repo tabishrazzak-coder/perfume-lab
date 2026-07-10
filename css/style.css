@@ -1092,7 +1092,10 @@ button:active {
 
 /* Short screens (≤715px height) — compact beaker + counter */
 @media (max-height: 715px) {
-  .beaker-group { margin-top: -1vh; }
+  #mixing-title { margin-top: 0.25rem !important; }
+  #mixing-title h2 { font-size: 1.1rem !important; }
+  #mixing-title p { display: none; }
+  .beaker-group { margin-top: 0.5rem; }
   .beaker-group .mt-2 { margin-top: 0.5rem !important; }
   #screen-mixing img[alt="Beaker"] { max-height: min(32vh, 240px) !important; }
   #total-mix-ml { font-size: 20px !important; }
